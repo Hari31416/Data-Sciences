@@ -1,5 +1,5 @@
-## Welcome to My Python Repository
+## Welcome to My Data-Science Repository
 
-### The repo contains some notes and codes related to python.
+### The repo contains some notes and codes related to Data-Science.
 
 [Notebook Links Homepage](index.html)
