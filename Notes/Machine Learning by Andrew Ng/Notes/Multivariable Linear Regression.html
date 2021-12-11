@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Joining SQL Tables</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Multivariable Linear Regression</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14259,473 +14259,60 @@ a.anchor-link {
 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Inner-Join">Inner Join<a class="anchor-link" href="#Inner-Join">&#182;</a></h2>
+<h2 id="Multiple-Features">Multiple Features<a class="anchor-link" href="#Multiple-Features">&#182;</a></h2>
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The basic syntax for an <code>INNER JOIN</code>, here including all columns in both tables:</p>
-<blockquote><p>SELECT * <br>
-FROM left_table <br>
-INNER JOIN right_table <br>
-ON left_table.id = right_table.id;</p>
-</blockquote>
+<p>Linear regression with multiple variables is also known as "multivariate linear regression".
+<br>
+We now introduce notation for equations where we can have any number of input variables.
+$$\begin{align*}x_j^{(i)} &amp;= \text{value of feature } j \text{ in the }i^{th}\text{ training example} \newline x^{(i)}&amp; = \text{the input (features) of the }i^{th}\text{ training example} \newline m &amp;= \text{the number of training examples} \newline n &amp;= \text{the number of features} \end{align*}$$
+<br>
+The multivariable form of the hypothesis function accommodating these multiple features is as follows:</p>
+$$h_\theta (x) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \theta_3 x_3 + \cdots + \theta_n x_n$$<p>Using the definition of matrix multiplication, our multivariable hypothesis function can be concisely represented as:
+$$\begin{align*}h_\theta(x) =\begin{bmatrix}\theta_0 \hspace{2em} \theta_1 \hspace{2em} ... \hspace{2em} \theta_n\end{bmatrix}\begin{bmatrix}x_0 \newline x_1 \newline \vdots \newline x_n\end{bmatrix}= \theta^T x\end{align*}$$
+Here for convenience reasons in we assume $x_{0}^{(i)} =1 \text{ for } (i\in { 1,\dots, m } )$
+​</p>
 
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Instead of writing the full table name, you can use table aliasing as a shortcut. For tables you also use <code>AS</code> to add the alias immediately after the table name with a space. Check out the aliasing of cities and countries below.</p>
-<blockquote><p>SELECT c1.name AS city, c2.name AS country <br>
-FROM cities AS c1<br>
-INNER JOIN countries AS c2<br>
-ON c1.country_code = c2.code;</p>
-</blockquote>
+<h3 id="Gradient-Descent-for-Multiple-Variables">Gradient Descent for Multiple Variables<a class="anchor-link" href="#Gradient-Descent-for-Multiple-Variables">&#182;</a></h3><p>The gradient descent equation itself is generally the same form; we just have to repeat it for our 'n' features:
+$$ \begin{align*} &amp; \text{repeat until convergence:} \; \lbrace \newline \; &amp; \theta_0 := \theta_0 - \alpha \frac{1}{m} \sum\limits_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) \cdot x_0^{(i)}\newline \; &amp; \theta_1 := \theta_1 - \alpha \frac{1}{m} \sum\limits_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) \cdot x_1^{(i)} \newline \; &amp; \theta_2 := \theta_2 - \alpha \frac{1}{m} \sum\limits_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) \cdot x_2^{(i)} \newline &amp; \cdots \newline \rbrace \end{align*}$$</p>
 
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Notice that to select a field in your query that appears in multiple tables, you'll need to identify which table/table alias you're referring to by using a <code>.</code> in your <code>SELECT</code> statement.</p>
+<h3 id="Feature-Scaling">Feature Scaling<a class="anchor-link" href="#Feature-Scaling">&#182;</a></h3><p>We can speed up gradient descent by having each of our input values in roughly the same range. This is because θ will descend quickly on small ranges and slowly on large ranges, and so will oscillate inefficiently down to the optimum when the variables are very uneven.
+<br>
+The way to prevent this is to modify the ranges of our input variables so that they are all roughly the same. Ideally:
+$$−1 ≤ x_{(i)}$$
+or
+$$−0.5 ≤ x_{(i)}$$ 
+We can also use <b> mean normalization </b> to scale our input variables formula:
+$$x_i := \dfrac{x_i - \mu_i}{s_i}$$</p>
 
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>In SQL, the joining can be done for even multiple tables.</p>
-<blockquote><p>SELECT * <br>
-FROM left_table <br>
-  INNER JOIN right_table <br>
-    ON left_table.id = right_table.id <br>
-  INNER JOIN another_table <br>
-    ON left_table.id = another_table.id; <br></p>
-</blockquote>
+<h3 id="Polynomial-Regression">Polynomial Regression<a class="anchor-link" href="#Polynomial-Regression">&#182;</a></h3><p>Our hypothesis function need not be linear (a straight line) if that does not fit the data well.<br>
+We can <strong>change the behavior or curve</strong> of our hypothesis function by making it a quadratic, cubic or square root function (or any other form). <br>
+For example, if our hypothesis function is $h_\theta(x) = \theta_0 + \theta_1 x_1$ then we can create additional features based on $x_1$, to get the quadratic function $$h_\theta(x) = \theta_0 + \theta_1 x_1 + \theta_2 x_1^2$$ or the cubic function $$h_\theta(x) = \theta_0 + \theta_1 x_1 + \theta_2 x_1^2 + \theta_3 x_1^3$$ In the cubic version, we have created new features $x_2$ and $x_3x$ where $x_2 = x_1^2$ and $x_3 = x_1^3$.
+<br>
+To make it a square root function, we could do: $$h_\theta(x) = \theta_0 + \theta_1 x_1 + \theta_2 \sqrt{x_1}$$
+​</p>
 
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>When doing this type of long joining, it becomes useful to alias each table using the first letter of its name (e.g. <code>countries AS c</code>)!</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Inner-Join-via-USING">Inner Join via <code>USING</code><a class="anchor-link" href="#Inner-Join-via-USING">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>When joining tables with a common field name, e.g.</p>
-<blockquote><p>SELECT *<br>
-FROM countries<br>
-  INNER JOIN economies<br>
-    ON countries.code = economies.code<br></p>
-</blockquote>
-<p>You can use USING as a shortcut:</p>
-<blockquote><p>SELECT *<br>
-FROM countries<br>
-  INNER JOIN economies<br>
-    USING(code)</p>
-</blockquote>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Self-join">Self-join<a class="anchor-link" href="#Self-join">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Self-join is exactly what it says it is. It joins a table with itself. But why would we do that? Well, it can be used to perform some special queries. The syntax is:</p>
-<blockquote><p>SELECT p1.country_code, p1.size as size2010, p2.size as size2015<br>
-FROM populations (alias as p1)<br>
-FROM populations as p1<br>
-Join to itself (alias as p2)<br>
-  INNER JOIN populations as p2<br>
-Match on country code<br>
-    USING(country_code)<br>
-    AND p1.year = p2.year - 5</p>
-</blockquote>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Here, using self-join we can calculate the increase in population from 2010 to 2015 for each country code! Using</p>
-<blockquote><p>((p2.size - p1.size)/p1.size * 100.0) AS growth_percent</p>
-</blockquote>
-<p>also gives the percentage growth.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Case-when-and-then">Case when and then<a class="anchor-link" href="#Case-when-and-then">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Often it's useful to look at a numerical field not as raw data, but instead as being in different categories or groups. We can use <code>CASE</code> with <code>WHEN</code>, <code>THEN</code>, <code>ELSE</code>, and <code>END</code> to define a new grouping field. The syntax is:</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<blockquote><p>SELECT name, continent, code, surface_area,<br>
-    CASE WHEN surface_area &gt; 2000000 THEN 'large'<br>
-        -- Second case<br>
-        WHEN surface_area &gt; 350000 THEN 'medium'<br>
-        -- Else clause + end<br>
-        ELSE 'small' END<br>
-        -- Alias name<br>
-        AS geosize_group<br>
--- From table<br>
-FROM countries;</p>
-</blockquote>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Using <code>INTO countries_plus</code> just before <code>FROM</code> is a shortcut for creating a new table with the same columns as the original table plus the new field.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Outer-Joins">Outer Joins<a class="anchor-link" href="#Outer-Joins">&#182;</a></h2>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Left-and-Right-Joins">Left and Right Joins<a class="anchor-link" href="#Left-and-Right-Joins">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Left Join</h4><f/igcaption>
-<img src="img/01_01.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Right Join</h4><f/igcaption>
-<img src="img/01_02.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The syntax for these is similar to the <code>INNER JOIN</code> syntax, but with a <code>LEFT</code> or <code>RIGHT</code> keyword in front of the <code>INNER</code> keyword.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<blockquote><p>Right joins aren't as common as left joins. One reason why is that you can always write a right join as a left join.</p>
-</blockquote>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Full-Joins">Full Joins<a class="anchor-link" href="#Full-Joins">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Full Join</h4><f/igcaption>
-<img src="img/01_03.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<blockquote><p>The <code>FULL JOIN</code> query returned 17 rows, the <code>OUTER JOIN</code> returned 4 rows, and the <code>INNER JOIN</code> only returned 3 rows.</p>
-</blockquote>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Cross-Joins">Cross Joins<a class="anchor-link" href="#Cross-Joins">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Cross Join</h4><f/igcaption>
-<img src="img/01_04.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Set-Operations">Set Operations<a class="anchor-link" href="#Set-Operations">&#182;</a></h2>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Venn Diagrams</h4><f/igcaption>
-<img src="img/01_06.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Union">Union<a class="anchor-link" href="#Union">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Union Syntax</h4><f/igcaption>
-<img src="img/01_05.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Intersect-Syntax">Intersect Syntax<a class="anchor-link" href="#Intersect-Syntax">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Intersect Syntax</h4><f/igcaption>
-<img src="img/01_07.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Except-Syntax">Except Syntax<a class="anchor-link" href="#Except-Syntax">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Except Syntax</h4><f/igcaption>
-<img src="img/01_08.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Semi-Join">Semi-Join<a class="anchor-link" href="#Semi-Join">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Semi Syntax</h4><f/igcaption>
-<img src="img/01_09.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<blockquote><p>The above syntax shows an example of inner query, where the result of the inner query is used in the outer query.</p>
-</blockquote>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<blockquote><p>SELECT DISTINCT name<br>
-FROM languages<br>
-WHERE code IN<br>
-  (SELECT code<br>
-   FROM countries<br>
-   WHERE region = 'Middle East')<br>
-ORDER BY name;</p>
-</blockquote>
-<p>This query returns the names of all languages spoken in the Middle East.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Sometimes problems solved with semi-joins can also be solved using an inner join.</p>
-<blockquote><p>SELECT DISTINCT languages.name AS language<br>
-FROM languages<br>
-INNER JOIN countries<br>
-ON languages.code = countries.code<br>
-WHERE region = 'Middle East'<br>
-ORDER BY language;</p>
-</blockquote>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Anti-Join">Anti-Join<a class="anchor-link" href="#Anti-Join">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Anti-join Syntax</h4><f/igcaption>
-<img src="img/01_10.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<blockquote><p>As we can see, the syntax is almost identical to the semi-join with <code>IN</code> replaced with <code>NOT IN</code>.</p>
-</blockquote>
-<p>It is particularly useful in identifying which records are causing an incorrect number of records to appear in join queries.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Subqueries">Subqueries<a class="anchor-link" href="#Subqueries">&#182;</a></h2>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Subqueries-inside-WHERE">Subqueries inside <code>WHERE</code><a class="anchor-link" href="#Subqueries-inside-WHERE">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The most basic way to use subqeuries is inside the <code>WHERE</code> clause. The following query returns all the sates in continent Asia where the fertility rate is lower than avergare.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Subqueries inside WHERE</h4><f/igcaption>
-<img src="img/01_11.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<blockquote><p>-- Select fields<br>
-SELECT name, country_code, urbanarea_pop<br>
-  -- From cities<br>
-  FROM cities<br>
--- Where city name in the field of capital cities<br>
-WHERE name IN<br>
-  -- Subquery<br>
-  (SELECT capital<br>
-   FROM countries)<br>
-ORDER BY urbanarea_pop DESC;</p>
-</blockquote>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The above query gets the urban area population for only capital cities.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Subqueries-Inside-SELECT">Subqueries Inside <code>SELECT</code><a class="anchor-link" href="#Subqueries-Inside-SELECT">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Subqueries inside SELECT</h4><f/igcaption>
-<img src="img/01_12.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The query above returns the count of countries which are listed in both the <code>prime_minister</code> table and states <code>table</code>.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Sometimes, a query, done by <code>INNER JOIN</code> can also be done using a subquery.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>SELECT countries.name AS country, COUNT(*) AS cities_num<br>
-  FROM cities<br>
-    INNER JOIN countries<br>
-    ON countries.code = cities.country_code<br>
-GROUP BY country<br>
-ORDER BY cities_num DESC, country<br>
-LIMIT 9;</p>
-<p>SELECT name AS country,<br>
-  (SELECT COUNT(*)<br>
-   FROM cities<br>
-   WHERE countries.code = cities.country_code) AS cities_num<br>
-FROM countries<br>
-ORDER BY cities_num DESC, country<br>
-LIMIT 9;</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Both these queries give the same result.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Subqeuries-Inside-FROM">Subqeuries Inside <code>FROM</code><a class="anchor-link" href="#Subqeuries-Inside-FROM">&#182;</a></h3>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<figure>
-<figcaption><h4>Subqueries inside FROM</h4><f/igcaption>
-<img src="img/01_13.png"/>
-</figure>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<blockquote><p>SELECT local_name, lang_num <br>
- FROM countries,<br>
-    (SELECT code, COUNT(*) AS lang_num<br>
-     FROM languages<br>
-     GROUP BY code) AS subquery<br>
-  WHERE countries.code = subquery.code<br>
-ORDER BY lang_num DESC;</p>
-</blockquote>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The above query counts the number of languages spoken for each country, identified by the country's local name</p>
-
+<h3 id="Normal-Equation">Normal Equation<a class="anchor-link" href="#Normal-Equation">&#182;</a></h3><p>Gradient descent gives one way of minimizing J. Let’s discuss a second way of doing so, this time performing the minimization explicitly and without resorting to an iterative algorithm. In the "Normal Equation" method, we will minimize J by explicitly taking its derivatives with respect to the θj ’s, and setting them to zero. This allows us to find the optimum theta without iteration. The normal equation formula is given below:
+$$\theta = (X^T X)^{-1}X^T y$$</p>
+<table><tbody><tr><th scope="col"><p>Gradient Descent</p></th><th scope="col"><p>Normal Equation</p></th></tr><tr><td><p>Need to choose alpha</p></td><td><p>No need to choose alpha</p></td></tr><tr><td><p>Needs many iterations</p></td><td><p>No need to iterate</p></td></tr><tr><td><p data-has-math="true">O (<span aria-label="k, n, squared"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><msup><mi>n</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">kn^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span>)</p></td><td><p data-has-math="true">O (<span aria-label="n, cubed"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>n</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">n^3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span></span></span></span></span>), need to calculate inverse of <span aria-label="X, start superscript, T, end superscript, X"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></mrow><annotation encoding="application/x-tex">X^TX</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span></span></span></p></td></tr><tr><td><p>Works well when n is large</p></td><td><p>Slow if n is very large</p></td></tr></tbody></table>
 </div>
 </div>
 </body>
