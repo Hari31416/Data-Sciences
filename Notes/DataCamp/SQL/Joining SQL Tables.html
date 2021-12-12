@@ -14264,6 +14264,14 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
+<figcaption><h4>Inner Join</h4><f/igcaption>
+<img src="img/01_0.png"/>
+</figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>The basic syntax for an <code>INNER JOIN</code>, here including all columns in both tables:</p>
 <blockquote><p>SELECT * <br>
 FROM left_table <br>
@@ -14434,11 +14442,6 @@ FROM countries;</p>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h3 id="Full-Joins">Full Joins<a class="anchor-link" href="#Full-Joins">&#182;</a></h3>
 </div>
 </div>
@@ -14535,6 +14538,14 @@ FROM countries;</p>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <figure>
+<figcaption><h4>Semi Join</h4><f/igcaption>
+<img src="img/01_-1.png"/>
+</figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
 <figcaption><h4>Semi Syntax</h4><f/igcaption>
 <img src="img/01_09.png"/>
 </figure>
@@ -14577,6 +14588,14 @@ ORDER BY language;</p>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h3 id="Anti-Join">Anti-Join<a class="anchor-link" href="#Anti-Join">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
+<figcaption><h4>Anti Join</h4><f/igcaption>
+<img src="img/01_-2.png"/>
+</figure>
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
@@ -14725,6 +14744,96 @@ ORDER BY lang_num DESC;</p>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>The above query counts the number of languages spoken for each country, identified by the country's local name</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Some-Examples-of-Subqueries">Some Examples of Subqueries<a class="anchor-link" href="#Some-Examples-of-Subqueries">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="1">1<a class="anchor-link" href="#1">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT cities.name, country_code, city_proper_pop, metroarea_pop,  <br>
+      city_proper_pop / metroarea_pop * 100 AS city_perc <br>
+  FROM cities <br>
+  WHERE cities.name IN <br>
+    (SELECT capital <br>
+     FROM countries <br>
+     WHERE (continent = 'Europe' <br>
+        OR continent LIKE '%America%')) <br>
+       AND metroarea_pop IS NOT NULL <br>
+ORDER BY city_perc DESC <br></p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Returns top 10 capital cities in Europe and the Americas in terms of a calculated percentage using city_proper_pop and metroarea_pop in cities.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="2">2<a class="anchor-link" href="#2">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT DISTINCT c.name, e.total_investment, e.imports<br>
+  FROM countries AS c<br>
+    LEFT JOIN economies AS e<br>
+      ON (c.code = e.code)<br>
+        AND c.code IN (<br>
+          SELECT l.code<br>
+          FROM languages AS l<br>
+          WHERE official = 'true'<br>
+        ) <br>
+  WHERE region = 'Central America' AND year = 2015<br>
+ORDER BY c.name;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Gets the country names and other 2015 data in the economies table and the countries table for Central American countries with an official language.
+<br>
+Here, you can see that subqueries can even be applied on <code>ON</code>.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="3">3<a class="anchor-link" href="#3">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT code, inflation_rate, unemployment_rate <br>
+  FROM economies<br>
+  WHERE year = 2015 AND code NOT IN<br>
+    (SELECT code<br>
+     FROM countries<br>
+     WHERE (gov_form = 'Constitutional Monarchy' OR gov_form LIKE '%Republic%'))<br>
+ORDER BY inflation_rate;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Here, we use a subquery to get 2015 economic data for countries that do not have<br></p>
+<ul>
+<li><code>gov_form</code> of <strong>'Constitutional Monarchy'</strong> or</li>
+<li><strong>'Republic'</strong> in their <code>gov_form</code>.</li>
+</ul>
 
 </div>
 </div>
