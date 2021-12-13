@@ -14264,7 +14264,13 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>A <code>CASE</code> statement is SQl version of 'if this then that' statements.</p>
+<p>A <code>CASE</code> statement is SQl version of 'if this then that' statements.<br>
+<code>CASE</code> statements can be used to:</p>
+<ul>
+<li>Categorizing data</li>
+<li>Filtering data</li>
+<li>Aggregating data</li>
+</ul>
 
 </div>
 </div>
@@ -14274,6 +14280,266 @@ a.anchor-link {
 <figcaption><h4>Basic CASE Syntax</h4><f/igcaption>
 <img src="img/02_01.png"/>
 </figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT date<br>
+    CASE WHEN home_goal &gt; away_goal THEN 'Home win!'<br>
+        WHEN home_goal &lt; away_goal THEN 'Home loss :(' <br>
+        ELSE 'Tie' END AS outcome<br>
+FROM matches_spain;<br></p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above query uses the <code>CASE</code> statement to create a new column called <code>outcome</code> that contains the outcome of the match.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>It is possible to combine multiple logics inside a <code>CASE</code> statement. The following query check if the team is <em>Chelsea</em> and classifies the outcome only when this is true!</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
+<figcaption><h4>CASE Syntax With AND</h4><f/igcaption>
+<img src="img/02_02.png"/>
+</figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>It is important to add the final <code>WHEN</code> condition otherwise the <code>CASE</code> statement will output the result coressponding to all teams, not only <em>Chelsea</em>.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>If we don't want the final <code>ELSE</code> clause, we can leave out the <code>ELSE</code> clause and it will result in a value of <code>NULL</code> everywhere the <code>ELSE</code> clause was supposed to return. (In above case, there will be no <em>Loss or tie :(</em> in reslting table, instead, it will be <code>NULL</code>.). However, we can do better and drop all these <code>NULL</code> values using a <code>WHERE</code> clause. The syntax is:</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
+<figcaption><h4>CASE Syntax With AND and WHERE</h4><f/igcaption>
+<img src="img/02_03.png"/>
+</figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>We don't need to filter anymore. ):</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    date,<br>
+    CASE WHEN hometeam_id = 8634 THEN 'FC Barcelona' <br>
+         ELSE 'Real Madrid CF' END as home,<br>
+    CASE WHEN awayteam_id = 8634 THEN 'FC Barcelona' <br>
+         ELSE 'Real Madrid CF' END as away,<br>
+    CASE WHEN home_goal &gt; away_goal AND hometeam_id = 8634 THEN 'Barcelona win!'<br>
+        WHEN home_goal &gt; away_goal AND hometeam_id = 8633 THEN 'Real Madrid win!'<br>
+        WHEN home_goal &lt; away_goal AND awayteam_id = 8634 THEN 'Barcelona win!'<br>
+        WHEN home_goal &lt; away_goal AND awayteam_id = 8633 THEN 'Real Madrid win!'<br>
+        ELSE 'Tie!' END AS outcome<br>
+FROM matches_spain<br>
+WHERE (awayteam_id = 8634 OR hometeam_id = 8634)<br>
+      AND (awayteam_id = 8633 OR hometeam_id = 8633);<br></p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above query returns the result of all the matches between <em>Barcelona</em> and <em>Real Madrid</em>. The result is in column <code>outcome</code> and has three different values: <code>Barcelona win!</code>, <code>Real Madrid win!</code> and <code>Tie!</code>.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p><code>CASE</code> statements allow you to categorize data that you're interested in - and exclude data you're not interested in. In order to do this, you can use a <code>CASE</code> statement as a filter in the <code>WHERE</code> statement to remove output you don't want to see.</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    season,<br>
+    date,<br>
+    home_goal,<br>
+    away_goal<br>
+FROM matches_italy<br>
+WHERE <br>
+    CASE WHEN hometeam_id = 9857 AND home_goal &gt; away_goal THEN 'Bologna Win'<br>
+        WHEN awayteam_id = 9857 AND away_goal &gt; home_goal THEN 'Bologna Win' <br>
+        END IS NOT NULL;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above query gives details on every match in this database where <em>Bologna</em> won. It excludes matches where <em>Bologna</em> didn't win.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><code>CASE</code> statements are like any column in our database. So, we can use <code>COUNT</code> on them to use <code>GROUP BY</code>. The syntax is:</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
+<figcaption><h4>CASE Syntax With COUNT and GROUP BY</h4><f/igcaption>
+<img src="img/02_04.png"/>
+</figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>Note that SQL counts the number of rows that match the <code>CASE</code> statement. So, you use any number or string between <code>THEN</code> and <code>END</code> to group the data.</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>In case the <code>CASE</code> statement returns a number, we can use <code>SUM</code> to sum the returned values.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
+<figcaption><h4>CASE Syntax With SUM</h4><f/igcaption>
+<img src="img/02_05.png"/>
+</figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>The <code>AVG</code> can be used the same way.</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Another use of <code>AVG</code> function is to calculate percentages. The syntax is:</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
+<figcaption><h4>CASE Syntax With AVG</h4><f/igcaption>
+<img src="img/02_06.png"/>
+</figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Here, the query returns the percentage of matches where the team won. We have used the <code>ROUND</code> function to round the result to two decimal places.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    c.name AS country,<br>
+    COUNT(CASE WHEN m.season = '2012/2013' THEN m.id END) AS matches_2012_2013,<br>
+    COUNT(CASE WHEN m.season = '2013/2014' THEN m.id END) AS matches_2013_2014,<br>
+    COUNT(CASE WHEN m.season = '2014/2015' THEN m.id END) AS matches_2014_2015<br>
+FROM country AS c<br>
+LEFT JOIN match AS m<br>
+ON c.id = m.country_id<br>
+GROUP BY c.name;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above query gives the number of matches played by countries in year 2012-13, 2013-14 and 2014-15.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>In R or Python, you have the ability to calculate a <code>SUM</code> of logical values (i.e., TRUE/FALSE) directly. In SQL, you have to convert these values into 1 and 0 before calculating a sum. This can be done using a <code>CASE</code> statement.</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    c.name AS country,<br>
+    SUM(CASE WHEN m.season = '2012/2013' AND m.home_goal &gt; m.away_goal <br>
+        THEN 1 ELSE 0 END) AS matches_2012_2013,<br>
+    SUM(CASE WHEN m.season = '2013/2014' AND m.home_goal &gt; m.away_goal <br>
+        THEN 1 ELSE 0 END) AS matches_2013_2014,<br>
+    SUM(CASE WHEN m.season = '2014/2015' AND m.home_goal &gt; m.away_goal <br>
+        THEN 1 ELSE 0 END) AS matches_2014_2015<br>
+FROM country AS c<br>
+LEFT JOIN match AS m<br>
+ON c.id = m.country_id<br>
+GROUP BY c.name;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Here, we have converted the boolean <code>TRUE</code> and <code>FALSE</code> values into 1 and 0 and summed it.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><code>CASE</code> statements will return any value you specify in your <code>THEN</code> clause. This is an incredibly powerful tool for robust calculations and data manipulation when used in conjunction with an aggregate statement. One key task you can perform is using <code>CASE</code> inside an <code>AVG</code> function to calculate a percentage of information in your database.</p>
+<blockquote><p>AVG(CASE WHEN condition_is_met THEN 1<br>
+         WHEN condition_is_not_met THEN 0 END)</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    c.name AS country,<br>
+    ROUND(AVG(CASE WHEN m.season='2013/2014' AND m.home_goal = m.away_goal THEN 1<br>
+             WHEN m.season='2013/2014' AND m.home_goal != m.away_goal THEN 0<br>
+             END),2) AS pct_ties_2013_2014,<br>
+    ROUND(AVG(CASE WHEN m.season='2014/2015' AND m.home_goal = m.away_goal THEN 1<br>
+             WHEN m.season='2014/2015' AND m.home_goal != m.away_goal THEN 0<br>
+             END),2) AS pct_ties_2014_2015<br>
+FROM country AS c<br>
+LEFT JOIN matches AS m<br>
+ON c.id = m.country_id<br>
+GROUP BY country;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above query gives the percentage of tied matches. It also rounds off the result to two decimal places.</p>
+
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
