@@ -14259,7 +14259,7 @@ a.anchor-link {
 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="CASE-Statements">CASE Statements<a class="anchor-link" href="#CASE-Statements">&#182;</a></h2>
+<h3 id="CASE-Statements">CASE Statements<a class="anchor-link" href="#CASE-Statements">&#182;</a></h3>
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
@@ -14541,20 +14541,253 @@ GROUP BY country;</p>
 <p>The above query gives the percentage of tied matches. It also rounds off the result to two decimal places.</p>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-python"><pre><span></span>
-</pre></div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Subqueries">Subqueries<a class="anchor-link" href="#Subqueries">&#182;</a></h2>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Subqueries-in-WHERE">Subqueries in <code>WHERE</code><a class="anchor-link" href="#Subqueries-in-WHERE">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Filtering-using-a-subquery-with-a-scalar">Filtering using a subquery with a scalar<a class="anchor-link" href="#Filtering-using-a-subquery-with-a-scalar">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Subqueries are incredibly powerful for performing complex filters and transformations. You can filter data based on single, scalar values using a subquery in ways you cannot by using <code>WHERE</code> statements or joins. Subqueries can also be used for more advanced manipulation of your data set.</p>
 
-     </div>
 </div>
 </div>
-</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    date,<br>
+    home_goal,<br>
+    away_goal<br>
+FROM  matches_2013_2014<br>
+WHERE (home_goal + away_goal) <br>
+       (SELECT 3 * AVG(home_goal + away_goal)<br>
+        FROM matches_2013_2014); <br></p>
+</blockquote>
 
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above query filters only those matches where the total goals scored by the teams are greater than 3 times the average of the total goals scored by the teams in the 2013-14 season.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Filtering-using-a-subquery-with-a-list">Filtering using a subquery with a list<a class="anchor-link" href="#Filtering-using-a-subquery-with-a-list">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>In addition to filtering using a single-value (scalar) subquery, you can create a list of values in a subquery to filter data based on a complex set of conditions. This type of subquery generates a one column reference list for the main query. As long as the values in your list match a column in your main query's table, you don't need to use a join -- even if the list is from a separate table.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    team_long_name,<br>
+    team_short_name<br>
+FROM team <br>
+WHERE team_api_id NOT IN<br>
+     (SELECT DISTINCT hometeam_ID  FROM match);</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Here, using a subquery, first, you will generate a list of unique hometeam_ID values from the unfiltered match table to exclude in the team table's team_api_ID column.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>We can even create more complex subqueries.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Subqueries-in-FROM">Subqueries in <code>FROM</code><a class="anchor-link" href="#Subqueries-in-FROM">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>If you're interested in filtering data from one table, you can also create a subquery from one of the tables, and then join it to an existing table in the database. A subquery in <code>FROM</code> is an effective way of answering detailed questions that requires filtering or transforming data before including it in your final results. A subquery in <code>FROM</code> returns a table of data that you can then use in your main query.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
+<!-- <figcaption><h4>'CASE Syntax With SUM'</h4><f/igcaption> -->
+<img src="img/02_07.png"/>
+</figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT<br>
+    c.name AS country_name,<br>
+    COUNT(sub.id) AS matches<br>
+FROM country AS c<br>
+INNER JOIN (SELECT country_id, id <br>
+           FROM match<br>
+           WHERE (home_goal + away_goal) &gt;= 10) AS sub<br>
+ON c.id = sub.country_id<br>
+GROUP BY country_name;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above query generates a subquery using the match table, and then join that subquery to the country table to calculate information about matches with 10 or more goals in total! We can get more information about the matches with 10 or more goals in total by:</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT<br>
+    country,<br>
+    date,<br>
+    home_goal,<br>
+    away_goal<br>
+FROM <br>
+    (SELECT c.name AS country, <br>
+            m.date, <br>
+            m.home_goal, <br>
+            m.away_goal,<br>
+           (m.home_goal + m.away_goal) AS total_goals<br>
+    FROM match AS m<br>
+    LEFT JOIN country AS c<br>
+    ON m.country_id = c.id) AS subq<br>
+WHERE total_goals &gt;= 10;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Subqueries-in-SELECT">Subqueries in <code>SELECT</code><a class="anchor-link" href="#Subqueries-in-SELECT">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Subqueries in <code>SELECT</code> statements generate a single value that allow you to pass an aggregate value down a data frame. This is useful for performing calculations on data within your database.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
+<figcaption><h4>Subqueries in SELECT</h4><f/igcaption>
+<img src="img/02_08.png"/>
+</figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    l.name AS league,<br>
+    ROUND(AVG(m.home_goal + m.away_goal), 2) AS avg_goals,<br>
+    (SELECT ROUND(AVG(home_goal + away_goal), 2) <br>
+     FROM match<br>
+     WHERE season = '2013/2014') AS overall_avg<br>
+FROM league AS l<br>
+LEFT JOIN match AS m<br>
+ON l.country_id = m.country_id<br>
+WHERE season = '2013/2014'<br>
+GROUP BY league;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Above query calculates the average number of goals per match in each country's league.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Subqueries in <code>SELECT</code> are a useful way to create calculated columns in a query. A subquery in <code>SELECT</code> can be treated as a single numeric value to use in your calculations. When writing queries in <code>SELECT</code>, it's important to remember that <strong>filtering the main query does not filter the subquery -- and vice versa.</strong></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Multiple-Subqueries">Multiple Subqueries<a class="anchor-link" href="#Multiple-Subqueries">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Subqueries can be used in multiple ways. You can use a subquery in <code>WHERE</code> to filter data, and then use a subquery in <code>FROM</code> to join the data. You can use a subquery in <code>SELECT</code> to generate a single value that you can use in your calculations. These all can also be done in a single query.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    s.stage,<br>
+    ROUND(s.avg_goals,2) AS avg_goals<br>
+FROM <br>
+    (SELECT<br>
+         stage,<br>
+         AVG(home_goal + away_goal) AS avg_goals<br>
+     FROM match<br>
+     WHERE season = '2012/2013'<br>
+     GROUP BY stage) AS s<br>
+WHERE <br>
+    s.avg_goals &gt; (SELECT AVG(home_goal + away_goal) <br>
+                    FROM match WHERE season = '2012/2013');</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above subquery to extracts a list of stages where the average home goals in a stage is higher than the overall average for home goals in a match.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    s.stage,<br>
+    ROUND(s.avg_goals,2) AS avg_goal,<br>
+    (SELECT AVG(home_goal + away_goal) FROM match WHERE season = '2012/2013') AS overall_avg<br>
+FROM <br>
+    (SELECT<br>
+         stage,<br>
+         AVG(home_goal + away_goal) AS avg_goals<br>
+     FROM match<br>
+     WHERE season = '2012/2013'<br>
+     GROUP BY stage) AS s<br>
+WHERE <br>
+    s.avg_goals &gt; (SELECT AVG(home_goal + away_goal) <br>
+                    FROM match WHERE season = '2012/2013');</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Here, we add a subquery in SELECT, in the previous query to compare the average number of goals scored in each stage to the total. This is an example of a query where we have used subqueries in multiple places (<code>WHERE</code>, <code>FROM</code>, <code>SELECT</code>).</p>
+
+</div>
 </div>
 </body>
 
