@@ -14259,7 +14259,7 @@ a.anchor-link {
 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="CASE-Statements">CASE Statements<a class="anchor-link" href="#CASE-Statements">&#182;</a></h3>
+<h2 id="CASE-Statements">CASE Statements<a class="anchor-link" href="#CASE-Statements">&#182;</a></h2>
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
@@ -14544,7 +14544,7 @@ GROUP BY country;</p>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Subqueries">Subqueries<a class="anchor-link" href="#Subqueries">&#182;</a></h2>
+<h2 id="Simple-Subqueries">Simple Subqueries<a class="anchor-link" href="#Simple-Subqueries">&#182;</a></h2>
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
@@ -14786,6 +14786,366 @@ WHERE <br>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Here, we add a subquery in SELECT, in the previous query to compare the average number of goals scored in each stage to the total. This is an example of a query where we have used subqueries in multiple places (<code>WHERE</code>, <code>FROM</code>, <code>SELECT</code>).</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Complex-Subqueries">Complex Subqueries<a class="anchor-link" href="#Complex-Subqueries">&#182;</a></h2>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Correlated-Subqueries">Correlated Subqueries<a class="anchor-link" href="#Correlated-Subqueries">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Correlated subqueries are subqueries that reference one or more columns in the main query. Correlated subqueries depend on information in the main query to run, and thus, cannot be executed on their own.</p>
+<p>Correlated subqueries are evaluated in SQL once per row of data retrieved - a process that takes a lot more computing power and time than a simple subquery.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img src="img/02_09.png" alt=""></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Difference between correlated subqueries and simple subqueries:</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img src="img/02_10.png" alt=""></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Nested-Subqueries">Nested Subqueries<a class="anchor-link" href="#Nested-Subqueries">&#182;</a></h2>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Nested-simple-subqueries">Nested simple subqueries<a class="anchor-link" href="#Nested-simple-subqueries">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>A nested subquery is a subquery that is used in another subquery. Nested subqueries can be either simple or correlated.
+Just like an unnested subquery, a nested subquery's components can be executed independently of the outer query, while a correlated subquery requires both the outer and inner subquery to run and produce results.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT<br>
+    season,<br>
+    MAX(home_goal + away_goal) AS max_goals,<br>
+   (SELECT max(home_goal + away_goal) FROM match) AS overall_max_goals,<br>
+   (SELECT max(home_goal + away_goal)<br>
+    FROM match<br>
+    WHERE id IN (<br>
+          SELECT id FROM match WHERE EXTRACT(MONTH FROM date) = 07)) AS july_max_goals<br>
+FROM match<br>
+GROUP BY season;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>This subquery gives the highest total number of goals in each season, overall, and during July across all seasons.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Nest-a-subquery-in-FROM">Nest a subquery in <code>FROM</code><a class="anchor-link" href="#Nest-a-subquery-in-FROM">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Nesting subqueries and performing your transformations one step at a time, adding it to a subquery, and then performing the next set of transformations is often the easiest way to yield accurate information about your data.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>SELECT<br>
+    c.name AS country,<br>
+    AVG(outer_s.matches) AS avg_seasonal_high_scores<br>
+FROM country AS c<br>
+LEFT JOIN (<br>
+  SELECT country_id, season,<br>
+         COUNT(id) AS matches<br>
+  FROM (<br>
+    SELECT country_id, season, id<br>
+    FROM match<br>
+    WHERE home_goal &gt;= 5 OR away_goal &gt;= 5) AS inner_s<br>
+  GROUP BY country_id, season) AS outer_s<br>
+ON c.id = outer_s.country_id<br>
+GROUP BY country;<br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The query answers the question: "What is the average number of matches in each country that have a home or away goal greater than or equal to 5?"</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Common-Table-Expressions">Common Table Expressions<a class="anchor-link" href="#Common-Table-Expressions">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Common table expressions (CTEs) are a way to create a temporary table in your database that can be used in a query. These are used to increase the readability and accessibility of query.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<figure>
+<figcaption><h4></h4></figcaption>
+<img src ="img/02_11.png">
+</figure>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img src="img/02_12.png" alt=""></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above figure shows the query to create a temporary table. If we need more than one cte, we can use the <code>WITH</code> keyword to create multiple ctes, seperated by commas.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img src="img/02_13.png" alt=""></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Readability">Readability<a class="anchor-link" href="#Readability">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>WITH match_list AS (<br>
+    SELECT <br>
+        country_id, <br>
+        id<br>
+    FROM match<br>
+    WHERE (home_goal + away_goal) &gt;= 10)<br>
+SELECT<br>
+    l.name AS league,<br>
+    COUNT(match_list.id) AS matches<br>
+FROM league AS l<br>
+LEFT JOIN match_list ON l.id = match_list.country_id<br>
+GROUP BY l.name;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above query generated a list of countries and the number of matches in each country with more than 10 total goals using a CTE to create a temporary table.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Organizing-with-CTEs">Organizing with CTEs<a class="anchor-link" href="#Organizing-with-CTEs">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>WITH match_list AS (<br>
+    SELECT <br>
+        l.name AS league, <br>
+        date, <br>
+        home_goal, <br>
+        m.away_goal,<br>
+       (m.home_goal + m.away_goal) AS total_goals<br>
+    FROM match AS m<br>
+    LEFT JOIN league as l ON m.country_id = l.id)<br>
+SELECT league, date, home_goal, away_goal<br>
+FROM match_list<br>
+WHERE total_goals &gt;=10;<br></p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>This query gives details about matches with very high scores using CTEs. Just like a subquery in FROM, you can join tables inside a CTE.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="CTEs-with-nested-subqueries">CTEs with nested subqueries<a class="anchor-link" href="#CTEs-with-nested-subqueries">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Since many queries are written with the intention of being saved and re-run in the future, proper organization is key to a seamless workflow. Arranging subqueries as CTEs will save you time, space, and confusion in the long run!</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>WITH match_list AS (<br>
+    SELECT <br>
+        country_id,<br>
+       (home_goal + away_goal) AS goals<br>
+    FROM match<br>
+    WHERE id IN (<br>
+       SELECT id<br>
+       FROM match<br>
+       WHERE season = '2013/2014' AND EXTRACT(MONTH FROM date) = '08'))<br><br>
+SELECT <br>
+    l.name,<br>
+    AVG(goals)<br>
+FROM league AS l<br>
+-- Join the CTE onto the league table<br>
+LEFT JOIN match_list ON l.id = match_list.country_id<br>
+GROUP BY l.name;<br></p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>As you can see, CTE with a nested subquery is easy to read - and produces an interesting set of data! <br>
+Furthermore, as CTEs are evaluated in the starting of the query, they can be used in any part of the query.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Which-Method-to-Use?">Which Method to Use?<a class="anchor-link" href="#Which-Method-to-Use?">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>There are alot of way to get the information we can want from a query. However, they all are not the same. The methods used above, all have some limitations and benefits.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img src="img/02_14.png" alt=""></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Let's answer one single question using all these methods. The question is: How do you get both the home and away team names into one final query result?</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT<br>
+    m.date,<br>
+    hometeam,<br>
+    awayteam,<br>
+    m.home_goal,<br>
+    m.away_goal<br>
+FROM match AS m<br><br>
+LEFT JOIN (<br>
+  SELECT match.id, team.team_long_name AS hometeam<br>
+  FROM match<br>
+  LEFT JOIN team<br>
+  ON match.hometeam_id = team.team_api_id) AS home<br>
+ON home.id = m.id<br><br>
+LEFT JOIN (<br>
+  SELECT match.id, team.team_long_name AS awayteam<br>
+  FROM match<br>
+  LEFT JOIN team<br>
+  ON match.awayteam_id = team.team_api_id) AS away<br>
+ON away.id = m.id;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Here, we are using just <code>JOIN</code>. This is one way to generate a list of team names who played in a match. This is much easier to read than team ID numbers!</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Let's solve the same problem using correlated subqueries.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT<br>
+    m.date,<br>
+    (SELECT team_long_name<br>
+     FROM team AS t<br>
+     WHERE t.team_api_id = m.hometeam_id) AS hometeam,<br>
+    (SELECT team_long_name<br>
+     FROM team AS t<br>
+     WHERE t.team_api_id = m.awayteam_id) AS awayteam,<br>
+     home_goal,<br>
+     away_goal<br>
+FROM match AS m;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Finally, let's explore the final method - common table expressions.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>WITH home AS (<br>
+  SELECT m.id, m.date, <br>
+         t.team_long_name AS hometeam, m.home_goal<br>
+  FROM match AS m<br>
+  LEFT JOIN team AS t <br>
+  ON m.hometeam_id = t.team_api_id),<br><br>
+away AS (<br>
+  SELECT m.id, m.date, <br>
+         t.team_long_name AS awayteam, m.away_goal<br>
+  FROM match AS m<br>
+  LEFT JOIN team AS t <br>
+  ON  m.awayteam_id = t.team_api_id)<br><br>
+SELECT <br>
+    home.date,<br>
+    home.hometeam,<br>
+    away.awayteam,<br>
+    home.home_goal,<br>
+    away.away_goal<br>
+FROM home<br>
+INNER JOIN away<br>
+ON home.id = away.id;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 
 </div>
 </div>
