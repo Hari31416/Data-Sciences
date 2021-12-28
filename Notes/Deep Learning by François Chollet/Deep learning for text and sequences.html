@@ -16232,6 +16232,633 @@ data.</p>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Understanding-recurrent-neural-networks">Understanding recurrent neural networks<a class="anchor-link" href="#Understanding-recurrent-neural-networks">&#182;</a></h2>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>A major characteristic of all neural networks you’ve seen so far, such as densely connected networks and convnets, is that they have no memory. Each input shown to
+them is processed independently, with no state kept in between inputs.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Biological intelligence processes information incrementally while maintaining an
+internal model of what it’s processing, built from past information and constantly
+updated as new information comes in.</p>
+<p>A recurrent neural network (RNN) adopts the same principle, albeit in an extremely
+simplified version: it processes sequences by iterating through the sequence elements
+and maintaining a state containing information relative
+to what it has seen so far.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The state of the RNN is reset between processing two different, independent sequences (such as two different
+IMDB reviews), so you still consider one sequence a single data point: a single input to the network. What
+changes is that this data point is no longer processed in a
+single step; rather, the network internally loops over
+sequence elements.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>To make these notions of loop and state clear, let’s implement the forward pass of a
+toy RNN in Numpy. This RNN takes as input a sequence of vectors, which you’ll encode
+as a 2D tensor of size (timesteps, input<em>features). It loops over timesteps, and at
+each timestep, it considers its current state at t and the input at t (of shape (input</em>
+features,), and combines them to obtain the output at t. You’ll then set the state for
+the next step to be this previous output. For the first timestep, the previous output
+isn’t defined; hence, there is no current state. So, you’ll initialize the state as an allzero vector called the initial state of the network.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">timesteps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">input_features</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">output_features</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">timesteps</span><span class="p">,</span> <span class="n">input_features</span><span class="p">))</span>
+<span class="n">state_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">output_features</span><span class="p">,))</span>
+
+<span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">output_features</span><span class="p">,</span> <span class="n">input_features</span><span class="p">))</span>
+<span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">output_features</span><span class="p">,</span> <span class="n">output_features</span><span class="p">))</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">output_features</span><span class="p">,))</span>
+
+<span class="n">successive_outputs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">input_t</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+    <span class="n">output_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">input_t</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">state_t</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">successive_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_t</span><span class="p">)</span>
+    <span class="n">state_t</span> <span class="o">=</span> <span class="n">output_t</span>
+
+<span class="n">final_output_sequence</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">successive_outputs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">final_output_sequence</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[&nbsp;]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>array([0.99999963, 0.99999998, 1.        , ..., 1.        , 1.        ,
+       1.        ])</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Easy enough: in summary, an RNN is a for loop that reuses quantities computed
+during the previous iteration of the loop, nothing more. Of course, there are many
+different RNNs fitting this definition that you could build</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img src="img/05_03.png" alt=""></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>In this example, the final output is a 2D tensor of shape (timesteps,
+output_features), where each timestep is the output of the loop at time t.
+Each timestep t in the output tensor contains information about timesteps 0
+to t in the input sequence—about the entire past. For this reason, in many
+cases, you don’t need this full sequence of outputs; you just need the last output (output_t at the end of the loop), because it already contains information about the entire sequence.</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="A-recurrent-layer-in-Keras">A recurrent layer in Keras<a class="anchor-link" href="#A-recurrent-layer-in-Keras">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above numpy implementation can be done in Keras using <code>SimpleRNN</code> layer.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">SimpleRNN</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>However, like all other
+Keras layers, not a single sequence as in the Numpy example. This means it takes inputs
+of shape (batch_size, timesteps, input_features), rather than (timesteps,
+input_features).</p>
+<p>Like all recurrent layers in Keras, <code>SimpleRNN</code> can be run in two different modes: it
+can return either the full sequences of successive outputs for each timestep (a 3D tensor of shape (batch_size, timesteps, output_features)) or only the last output for
+each input sequence (a 2D tensor of shape (batch_size, output_features)). These
+two modes are controlled by the <code>return_sequences</code> constructor argument.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Embedding</span><span class="p">,</span> <span class="n">SimpleRNN</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Embedding</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">32</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SimpleRNN</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Model: &#34;sequential&#34;
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding (Embedding)        (None, None, 32)          320000    
+_________________________________________________________________
+simple_rnn (SimpleRNN)       (None, 32)                2080      
+=================================================================
+Total params: 322,080
+Trainable params: 322,080
+Non-trainable params: 0
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The following example returns the full state sequence:</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Embedding</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">32</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SimpleRNN</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Model: &#34;sequential_1&#34;
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_1 (Embedding)      (None, None, 32)          320000    
+_________________________________________________________________
+simple_rnn_1 (SimpleRNN)     (None, None, 32)          2080      
+=================================================================
+Total params: 322,080
+Trainable params: 322,080
+Non-trainable params: 0
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>It’s sometimes useful to stack several recurrent layers one after the other in order to
+increase the representational power of a network. In such a setup, you have to get all
+of the intermediate layers to return full sequence of outputs:</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Embedding</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">32</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SimpleRNN</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SimpleRNN</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SimpleRNN</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SimpleRNN</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Model: &#34;sequential_2&#34;
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_2 (Embedding)      (None, None, 32)          320000    
+_________________________________________________________________
+simple_rnn_2 (SimpleRNN)     (None, None, 32)          2080      
+_________________________________________________________________
+simple_rnn_3 (SimpleRNN)     (None, None, 32)          2080      
+_________________________________________________________________
+simple_rnn_4 (SimpleRNN)     (None, None, 32)          2080      
+_________________________________________________________________
+simple_rnn_5 (SimpleRNN)     (None, 32)                2080      
+=================================================================
+Total params: 328,320
+Trainable params: 328,320
+Non-trainable params: 0
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Now, let’s use such a model on the IMDB movie-review-classification problem. First,
+preprocess the data.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.datasets</span> <span class="kn">import</span> <span class="n">imdb</span>
+<span class="kn">from</span> <span class="nn">keras.preprocessing</span> <span class="kn">import</span> <span class="n">sequence</span>
+
+<span class="n">max_features</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">maxlen</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">32</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Loading data...&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="n">input_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span> <span class="p">(</span><span class="n">input_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span> <span class="o">=</span> <span class="n">imdb</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">num_words</span><span class="o">=</span><span class="n">max_features</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_train</span><span class="p">),</span> <span class="s1">&#39;train sequences&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_test</span><span class="p">),</span> <span class="s1">&#39;test sequences&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Pad sequences (samples x time)&#39;</span><span class="p">)</span>
+<span class="n">input_train</span> <span class="o">=</span> <span class="n">sequence</span><span class="o">.</span><span class="n">pad_sequences</span><span class="p">(</span><span class="n">input_train</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">maxlen</span><span class="p">)</span>
+<span class="n">input_test</span> <span class="o">=</span> <span class="n">sequence</span><span class="o">.</span><span class="n">pad_sequences</span><span class="p">(</span><span class="n">input_test</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">maxlen</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;input_train shape:&#39;</span><span class="p">,</span> <span class="n">input_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;input_test shape:&#39;</span><span class="p">,</span> <span class="n">input_test</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Loading data...
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>&lt;__array_function__ internals&gt;:5: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify &#39;dtype=object&#39; when creating the ndarray
+C:\Users\harik\anaconda3\lib\site-packages\keras\datasets\imdb.py:155: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify &#39;dtype=object&#39; when creating the ndarray
+  x_train, y_train = np.array(xs[:idx]), np.array(labels[:idx])
+C:\Users\harik\anaconda3\lib\site-packages\keras\datasets\imdb.py:156: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify &#39;dtype=object&#39; when creating the ndarray
+  x_test, y_test = np.array(xs[idx:]), np.array(labels[idx:])
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>25000 train sequences
+25000 test sequences
+Pad sequences (samples x time)
+input_train shape: (25000, 500)
+input_test shape: (25000, 500)
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Let’s train a simple recurrent network using an <code>Embedding</code> layer and a <code>SimpleRNN</code>
+layer.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Dense</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Embedding</span><span class="p">(</span><span class="n">max_features</span><span class="p">,</span> <span class="mi">32</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">SimpleRNN</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">))</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;rmsprop&#39;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">&#39;binary_crossentropy&#39;</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;acc&#39;</span><span class="p">])</span>
+
+<span class="n">history</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span>
+    <span class="n">epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+    <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Epoch 1/10
+157/157 [==============================] - 48s 125ms/step - loss: 0.6479 - acc: 0.5984 - val_loss: 0.4685 - val_acc: 0.7910
+Epoch 2/10
+157/157 [==============================] - 19s 119ms/step - loss: 0.3754 - acc: 0.8484 - val_loss: 0.3850 - val_acc: 0.8560
+Epoch 3/10
+157/157 [==============================] - 18s 112ms/step - loss: 0.2777 - acc: 0.8916 - val_loss: 0.3516 - val_acc: 0.8612
+Epoch 4/10
+157/157 [==============================] - 18s 114ms/step - loss: 0.2111 - acc: 0.9213 - val_loss: 0.4390 - val_acc: 0.7956
+Epoch 5/10
+157/157 [==============================] - 20s 128ms/step - loss: 0.1798 - acc: 0.9360 - val_loss: 0.7031 - val_acc: 0.7768
+Epoch 6/10
+157/157 [==============================] - 21s 133ms/step - loss: 0.1401 - acc: 0.9490 - val_loss: 0.4175 - val_acc: 0.8322
+Epoch 7/10
+157/157 [==============================] - 20s 129ms/step - loss: 0.0939 - acc: 0.9688 - val_loss: 0.4694 - val_acc: 0.8478
+Epoch 8/10
+157/157 [==============================] - 17s 111ms/step - loss: 0.0636 - acc: 0.9788 - val_loss: 0.5000 - val_acc: 0.8522
+Epoch 9/10
+157/157 [==============================] - 17s 111ms/step - loss: 0.0458 - acc: 0.9868 - val_loss: 0.5358 - val_acc: 0.8430
+Epoch 10/10
+157/157 [==============================] - 19s 119ms/step - loss: 0.0326 - acc: 0.9907 - val_loss: 0.6331 - val_acc: 0.8116
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">acc</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;acc&#39;</span><span class="p">]</span>
+<span class="n">val_acc</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;val_acc&#39;</span><span class="p">]</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span>
+<span class="n">val_loss</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]</span>
+<span class="n">epochs</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Training acc&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">val_acc</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Validation acc&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Training and validation accuracy&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Training loss&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">val_loss</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Validation loss&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Training and validation loss&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+
+<div class="jp-RenderedImage jp-OutputArea-output ">
+<img src="data:image/png;base64,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iznqqKMoKCigoKCgzD+Q6667jp49e9KrVy8uvzzUmFu4cCGDBg2iV69eFBQU8N//fp3rQYvUH3WRJ9IxYQLk5pZdlpsblmeMu2fdrW/fvl7eggULdlpWmc6d3cNHV/bWuXPah6jU+PHjfeLEiT569Gg/6aSTfOvWre7uvnr1at+yZYu7uz///PN+6qmnurv7yy+/7CeddFLpvocffrhv2rTJV65c6W3atPHNmze7u3vz5s1Lt2/VqpUvXbrUt23b5ocddpi/9tprvnHjRs/Ly/NFixa5u/uIESNKj5tq/fr1vnHjRnd3f//9973kvZw5c6Yffvjhvn79end3X7Vqlbu79+vXzx999FF3d9+4cWPp+prYlc9IJG61mSd21QMPhOc1Cz8feGDXjwEUeSU5tV6NuklXXfR5AQwfPpycnBwAVq9ezejRo/nggw8wM7Zs2VLhPieddBJNmjShSZMm7LXXXnzyySfk5eWV2aZfv36ly3r37s3ixYtp0aIF+++/f+k49ZEjRzJlys4X3dmyZQvnn38+c+bMIScnh/fffx+AF154gbPPPpvcqOnQpk0b1q5dy7JlyzjllFOAMOlJpKGoqzyRjlGjMjucsrxEdt3URZ8XQPPmzUvv/+pXv+KYY45h3rx5PPHEE5XO4G3SpEnp/ZycnAr79yvaxtO8QMwf//hHOnTowNy5cykqKio9WezuOw2BTPeYIrUh7v7xusoT2SCRib5O+rzKWb16NZ06heKc99xzT8aP37VrVxYtWsTixYsBeOihhyqNY5999qFRo0bcf//9bNu2DYDjjjuOu+66iw3ROK7PP/+cVq1akZeXx/Tp0wH46quvSteL1KZs6B+PI0/EJZGJftQomDIFOncGs/BzypTa/Wp02WWXccUVV3DEEUeUJtdMatasGbfccguDBw/myCOPpEOHDuyxxx47bXfuuedy7733cthhh/H++++XfusYPHgwJ598MoWFhfTu3ZtJkyYBcP/993PjjTdy8MEH079/fz7++OOMxy5SXl2MHa9OHHkiLll5zdjCwkIvf+GRd955h27dusUUUXZYt24dLVq0wN0577zzOOCAA7j44ovjDquUPiNJV6NGoSVfnhls31738SSBmc1298KK1iWyRZ9Ut99+O71796ZHjx6sXr2aH//4x3GHJFIjDal/PBskctRNUl188cVZ1YIXqakJE8rWd4Hk9o9nA7XoRaTONaT+8WygFr2IxKK2x47LDmrRizQwcY9fl7qnFr1IA1IXtc8l+6hFn6YBAwbw7LPPllk2efJkzj333Cr3KRkmeuKJJ/Lll1/utM1VV11VOqa9MtOnT2fBggWlj3/961/zwgsv7EL0IkE2jF+XuqdEn6aRI0cybdq0MsumTZvGyJFVXmmx1MyZM2ndunWNnrt8or/66qsZNGhQjY4lDVs21XeRuqNEn6Zhw4bx5JNP8tVXXwGhHPDy5cs58sgj+clPfkJhYSE9evRg/PjxFe6fn5/PZ599BsCECRM46KCDGDRoUGk5Ywjj5A855BB69erFaaedxoYNG3j99deZMWMGl156Kb179+a///0vY8aM4ZFHHgHgxRdfpE+fPvTs2ZNzzjmnNL78/HzGjx9PQUEBPXv25N13390pJpU0bng0fr1hqpd99BddBHPmZPaYvXvD5MmVr2/bti39+vXjmWeeYejQoUybNo3TTz8dM2PChAm0adOGbdu2MXDgQN5++20OPvjgCo8ze/Zspk2bxltvvcXWrVspKCigb9++AJx66qn86Ec/AuCXv/wld955JxdccAEnn3wyQ4YMYdiwYWWOtWnTJsaMGcOLL77IgQceyFlnncWtt97KRRddBEC7du148803ueWWW5g0aRJ33HFHmf332msvnn/+eZo2bcoHH3zAyJEjKSoq4umnn2b69On8+9//Jjc3l88//xyAUaNGcfnll3PKKaewadMmtmsKY72j8esNk1r0uyC1+ya12+bhhx+moKCAPn36MH/+/DLdLOW99tprnHLKKeTm5tKqVStOPvnk0nXz5s3jqKOOomfPnkydOpX58+dXGc97771Hly5dOPDAAwEYPXo0r776aun6U089FYC+ffuWFkNLtWXLFn70ox/Rs2dPhg8fXhp3uiWNc8tXhJKsp/HrDVO9bNFX1fKuTd/73ve45JJLePPNN9m4cSMFBQV8+OGHTJo0iVmzZrHnnnsyZsyYSksUlyhfLrjEmDFjmD59Or169eKee+7hlVdeqfI41dUpKil3XFk55NSSxtu3by+tR6+Sxsmm8esNj1r0u6BFixYMGDCAc845p7Q1v2bNGpo3b84ee+zBJ598wtNPP13lMY4++mgee+wxNm7cyNq1a3niiSdK161du5Z99tmHLVu2MDVlcHPL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"
+>
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+
+<div class="jp-RenderedImage jp-OutputArea-output ">
+<img src="data:image/png;base64,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"
+>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Previously the first naive approach to this dataset got you to a test
+accuracy of 88%. Unfortunately, this small recurrent network doesn’t perform well
+compared to this baseline (only 85% validation accuracy). Part of the problem is that
+your inputs only consider the first 500 words, rather than full sequences—hence, the
+RNN has access to less information than the earlier baseline model. The remainder of
+the problem is that <code>SimpleRNN</code> isn’t good at processing long sequences, such as text.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Understanding-the-LSTM-and-GRU-layers">Understanding the LSTM and GRU layers<a class="anchor-link" href="#Understanding-the-LSTM-and-GRU-layers">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><code>SimpleRNN</code> isn’t the only recurrent layer available in Keras. There are two others: LSTM
+and <code>GRU</code>. In practice, you’ll always use one of these, because <code>SimpleRNN</code> is generally too
+simplistic to be of real use. <code>SimpleRNN</code> has a major issue: although it should theoretically
+be able to retain at time t information about inputs seen many timesteps before, in
+practice, such long-term dependencies are impossible to learn. This is due to the vanishing gradient problem.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The <code>LSTM</code> and <code>GRU</code> layers are designed to solve this problem. <code>LSTM</code> layer is a variant of the <code>SimpleRNN</code> layer; it adds a way
+to carry information across many timesteps. Imagine a conveyor belt running parallel
+to the sequence you’re processing. Information from the sequence can jump onto the
+conveyor belt at any point, be transported to a later timestep, and jump off, intact,
+when you need it. This is essentially what LSTM does: it saves information for later,
+thus preventing older signals from gradually vanishing during processing.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 
 </div>
 </div>
