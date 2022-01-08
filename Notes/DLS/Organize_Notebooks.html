@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Gradient Checking</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Organize Notebooks</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 <style type="text/css">
   pre { line-height: 125%; margin: 0; }
@@ -13096,11 +13096,11 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<table class='tfo-notebook-buttons' align='left'>
-<td style='border: none;'>
-<a target='blank' href='https://colab.research.google.com/github/Hari31416/Data-Sciences/blob/main/Notes/DLS/C2/Assignments/Gradient_Checking/Gradient_Checking.ipynb?hl=en'><img src='https://colab.research.google.com/img/colab_favicon_256px.png' width='28' height='28'/>Run on Google Colab</a></td>
-<td style='border: none;'>
-<a target='blank' href='https://github.com/Hari31416/Data-Sciences/blob/main/Notes/DLS/C2/Assignments/Gradient_Checking/Gradient_Checking.ipynb'><img src='https://cdn.icon-icons.com/icons2/2368/PNG/512/github_logo_icon_143772.png' width='28' height='28'/>View on Github</a></td>
+<table class="tfo-notebook-buttons" align="left">
+<td style="border: none;">
+<a target="blank" href="https://colab.research.google.com/github/Hari31416/Data-Sciences/blob/main/Notes/DLS/temp.ipynb?hl=en"><img src="https://colab.research.google.com/img/colab_favicon_256px.png" width="28" height="28"/>Run on Google Colab</a></td>
+<td style="border: none;">
+<a target="blank" href="https://github.com/Hari31416/Data-Sciences/blob/main/Notes/DLS/temp.ipynb"><img src="https://cdn.icon-icons.com/icons2/2368/PNG/512/github_logo_icon_143772.png" width="28" height="28"/>View on Github</a></td>
 </table>
 </div>
 </div>
@@ -13108,405 +13108,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Gradient-Checking">Gradient Checking<a class="anchor-link" href="#Gradient-Checking">&#182;</a></h1><p>Welcome to the final assignment for this week! In this assignment you'll be implementing gradient checking.</p>
-<p>By the end of this notebook, you'll be able to:</p>
-<p>Implement gradient checking to verify the accuracy of your backprop implementation</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Table-of-Contents">Table of Contents<a class="anchor-link" href="#Table-of-Contents">&#182;</a></h2><ul>
-<li><a href="#1">1 - Packages</a></li>
-<li><a href="#2">2 - Problem Statement</a></li>
-<li><a href="#3">3 - How does Gradient Checking work?</a></li>
-<li><a href="#4">4 - 1-Dimensional Gradient Checking</a><ul>
-<li><a href="#ex-1">Exercise 1 - forward_propagation</a></li>
-<li><a href="#ex-2">Exercise 2 - backward_propagation</a></li>
-<li><a href="#ex-3">Exercise 3 - gradient_check</a></li>
-</ul>
-</li>
-<li><a href="#5">5 - N-Dimensional Gradient Checking</a><ul>
-<li><a href="#ex-4">Exercise 4 - gradient_check_n</a></li>
-</ul>
-</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a name='1'></a></p>
-<h2 id="1---Packages">1 - Packages<a class="anchor-link" href="#1---Packages">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">testCases</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">public_tests</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">gc_utils</span> <span class="kn">import</span> <span class="n">sigmoid</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">dictionary_to_vector</span><span class="p">,</span> <span class="n">vector_to_dictionary</span><span class="p">,</span> <span class="n">gradients_to_vector</span>
-
-<span class="o">%</span><span class="k">load_ext</span> autoreload
-<span class="o">%</span><span class="k">autoreload</span> 2
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a name='2'></a></p>
-<h2 id="2---Problem-Statement">2 - Problem Statement<a class="anchor-link" href="#2---Problem-Statement">&#182;</a></h2><p>You are part of a team working to make mobile payments available globally, and are asked to build a deep learning model to detect fraud--whenever someone makes a payment, you want to see if the payment might be fraudulent, such as if the user's account has been taken over by a hacker.</p>
-<p>You already know that backpropagation is quite challenging to implement, and sometimes has bugs. Because this is a mission-critical application, your company's CEO wants to be really certain that your implementation of backpropagation is correct. Your CEO says, "Give me proof that your backpropagation is actually working!" To give this reassurance, you are going to use "gradient checking."</p>
-<p>Let's do it!</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a name='3'></a></p>
-<h2 id="3---How-does-Gradient-Checking-work?">3 - How does Gradient Checking work?<a class="anchor-link" href="#3---How-does-Gradient-Checking-work?">&#182;</a></h2><p>Backpropagation computes the gradients $\frac{\partial J}{\partial \theta}$, where $\theta$ denotes the parameters of the model. $J$ is computed using forward propagation and your loss function.</p>
-<p>Because forward propagation is relatively easy to implement, you're confident you got that right, and so you're almost 100% sure that you're computing the cost $J$ correctly. Thus, you can use your code for computing $J$ to verify the code for computing $\frac{\partial J}{\partial \theta}$.</p>
-<p>Let's look back at the definition of a derivative (or gradient):$$ \frac{\partial J}{\partial \theta} = \lim_{\varepsilon \to 0} \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon} $$</p>
-<p>If you're not familiar with the "$\displaystyle \lim_{\varepsilon \to 0}$" notation, it's just a way of saying "when $\varepsilon$ is really, really small."</p>
-<p>You know the following:</p>
-<p>$\frac{\partial J}{\partial \theta}$ is what you want to make sure you're computing correctly.
-You can compute $J(\theta + \varepsilon)$ and $J(\theta - \varepsilon)$ (in the case that $\theta$ is a real number), since you're confident your implementation for $J$ is correct.
-Let's use equation (1) and a small value for $\varepsilon$ to convince your CEO that your code for computing $\frac{\partial J}{\partial \theta}$ is correct!</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a name='4'></a></p>
-<h2 id="4---1-Dimensional-Gradient-Checking">4 - 1-Dimensional Gradient Checking<a class="anchor-link" href="#4---1-Dimensional-Gradient-Checking">&#182;</a></h2><p>Consider a 1D linear function $J(\theta) = \theta x$. The model contains only a single real-valued parameter $\theta$, and takes $x$ as input.</p>
-<p>You will implement code to compute $J(.)$ and its derivative $\frac{\partial J}{\partial \theta}$. You will then use gradient checking to make sure your derivative computation for $J$ is correct.</p>
-<p><img src="images/1Dgrad_kiank.png" style="width:600px;height:250px;"></p>
-<caption><center><font color='purple'><b>Figure 1</b>:1D linear model </font></center></caption><p>The diagram above shows the key computation steps: First start with $x$, then evaluate the function $J(x)$ ("forward propagation"). Then compute the derivative $\frac{\partial J}{\partial \theta}$ ("backward propagation").</p>
-<p><a name='ex-1'></a></p>
-<h3 id="Exercise-1---forward_propagation">Exercise 1 - forward_propagation<a class="anchor-link" href="#Exercise-1---forward_propagation">&#182;</a></h3><p>Implement <code>forward propagation</code>. For this simple function compute $J(.)$</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># GRADED FUNCTION: forward_propagation</span>
-
-<span class="k">def</span> <span class="nf">forward_propagation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Implement the linear forward propagation (compute J) presented in Figure 1 (J(theta) = theta * x)</span>
-<span class="sd">    </span>
-<span class="sd">    Arguments:</span>
-<span class="sd">    x -- a real-valued input</span>
-<span class="sd">    theta -- our parameter, a real number as well</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">    J -- the value of function J, computed using the formula J(theta) = theta * x</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="c1"># (approx. 1 line)</span>
-    <span class="c1"># J = </span>
-    <span class="c1"># YOUR CODE STARTS HERE</span>
-    <span class="n">J</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">theta</span>
-    
-    <span class="c1"># YOUR CODE ENDS HERE</span>
-    
-    <span class="k">return</span> <span class="n">J</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span>
-<span class="n">J</span> <span class="o">=</span> <span class="n">forward_propagation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;J = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">J</span><span class="p">))</span>
-<span class="n">forward_propagation_test</span><span class="p">(</span><span class="n">forward_propagation</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>J = 8
-<span class="ansi-green-intense-fg"> All tests passed.
-</span></pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a name='ex-2'></a></p>
-<h3 id="Exercise-2---backward_propagation">Exercise 2 - backward_propagation<a class="anchor-link" href="#Exercise-2---backward_propagation">&#182;</a></h3><p>Now, implement the <code>backward propagation</code> step (derivative computation) of Figure 1. That is, compute the derivative of $J(\theta) = \theta x$ with respect to $\theta$. To save you from doing the calculus, you should get $dtheta = \frac { \partial J }{ \partial \theta} = x$.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># GRADED FUNCTION: backward_propagation</span>
-
-<span class="k">def</span> <span class="nf">backward_propagation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Computes the derivative of J with respect to theta (see Figure 1).</span>
-<span class="sd">    </span>
-<span class="sd">    Arguments:</span>
-<span class="sd">    x -- a real-valued input</span>
-<span class="sd">    theta -- our parameter, a real number as well</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">    dtheta -- the gradient of the cost with respect to theta</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="c1"># (approx. 1 line)</span>
-    <span class="c1"># dtheta = </span>
-    <span class="c1"># YOUR CODE STARTS HERE</span>
-    <span class="n">dtheta</span> <span class="o">=</span> <span class="n">x</span>
-    
-    <span class="c1"># YOUR CODE ENDS HERE</span>
-    
-    <span class="k">return</span> <span class="n">dtheta</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span>
-<span class="n">dtheta</span> <span class="o">=</span> <span class="n">backward_propagation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;dtheta = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dtheta</span><span class="p">))</span>
-<span class="n">backward_propagation_test</span><span class="p">(</span><span class="n">backward_propagation</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>dtheta = 2
-<span class="ansi-green-intense-fg"> All tests passed.
-</span></pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a name='ex-3'></a></p>
-<h3 id="Exercise-3---gradient_check">Exercise 3 - gradient_check<a class="anchor-link" href="#Exercise-3---gradient_check">&#182;</a></h3><p>To show that the <code>backward_propagation()</code> function is correctly computing the gradient $\frac{\partial J}{\partial \theta}$, let's implement gradient checking.</p>
-<p><strong>Instructions</strong>:</p>
-<ul>
-<li>First compute "gradapprox" using the formula above (1) and a small value of $\varepsilon$. Here are the Steps to follow:<ol>
-<li>$\theta^{+} = \theta + \varepsilon$</li>
-<li>$\theta^{-} = \theta - \varepsilon$</li>
-<li>$J^{+} = J(\theta^{+})$</li>
-<li>$J^{-} = J(\theta^{-})$</li>
-<li>$gradapprox = \frac{J^{+} - J^{-}}{2  \varepsilon}$</li>
-</ol>
-</li>
-<li>Then compute the gradient using backward propagation, and store the result in a variable "grad"</li>
-<li>Finally, compute the relative difference between "gradapprox" and the "grad" using the following formula:
-$$ difference = \frac {\mid\mid grad - gradapprox \mid\mid_2}{\mid\mid grad \mid\mid_2 + \mid\mid gradapprox \mid\mid_2} \tag{2}$$
-You will need 3 Steps to compute this formula:<ul>
-<li>1'. compute the numerator using np.linalg.norm(...)</li>
-<li>2'. compute the denominator. You will need to call np.linalg.norm(...) twice.</li>
-<li>3'. divide them.</li>
-</ul>
-</li>
-<li>If this difference is small (say less than $10^{-7}$), you can be quite confident that you have computed your gradient correctly. Otherwise, there may be a mistake in the gradient computation. </li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># GRADED FUNCTION: gradient_check</span>
-
-<span class="k">def</span> <span class="nf">gradient_check</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">print_msg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Implement the backward propagation presented in Figure 1.</span>
-<span class="sd">    </span>
-<span class="sd">    Arguments:</span>
-<span class="sd">    x -- a float input</span>
-<span class="sd">    theta -- our parameter, a float as well</span>
-<span class="sd">    epsilon -- tiny shift to the input to compute approximated gradient with formula(1)</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">    difference -- difference (2) between the approximated gradient and the backward propagation gradient. Float output</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="c1"># Compute gradapprox using left side of formula (1). epsilon is small enough, you don&#39;t need to worry about the limit.</span>
-    <span class="c1"># (approx. 5 lines)</span>
-    <span class="c1"># theta_plus =                                 # Step 1</span>
-    <span class="c1"># theta_minus =                                # Step 2</span>
-    <span class="c1"># J_plus =                                    # Step 3</span>
-    <span class="c1"># J_minus =                                   # Step 4</span>
-    <span class="c1"># gradapprox =                                # Step 5</span>
-    <span class="c1"># YOUR CODE STARTS HERE</span>
-    <span class="n">theta_plus</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">+</span> <span class="n">epsilon</span>
-    <span class="n">theta_minus</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">-</span> <span class="n">epsilon</span>
-    <span class="n">J_plus</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">theta_plus</span>
-    <span class="n">J_minus</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">theta_minus</span>
-    <span class="n">gradapprox</span> <span class="o">=</span> <span class="p">(</span><span class="n">J_plus</span><span class="o">-</span><span class="n">J_minus</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">epsilon</span><span class="p">)</span>
-    
-    <span class="c1"># YOUR CODE ENDS HERE</span>
-    
-    <span class="c1"># Check if gradapprox is close enough to the output of backward_propagation()</span>
-    <span class="c1">#(approx. 1 line) DO NOT USE &quot;grad = gradapprox&quot;</span>
-    <span class="c1"># grad =</span>
-    <span class="c1"># YOUR CODE STARTS HERE</span>
-    <span class="n">grad</span> <span class="o">=</span> <span class="n">backward_propagation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
-    
-    <span class="c1"># YOUR CODE ENDS HERE</span>
-    
-    <span class="c1">#(approx. 1 line)</span>
-    <span class="c1"># numerator =                                 # Step 1&#39;</span>
-    <span class="c1"># denominator =                               # Step 2&#39;</span>
-    <span class="c1"># difference =                                # Step 3&#39;</span>
-    <span class="c1"># YOUR CODE STARTS HERE</span>
-    <span class="n">numerator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">grad</span><span class="o">-</span><span class="n">gradapprox</span><span class="p">)</span>
-    <span class="n">denominator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gradapprox</span><span class="p">)</span>
-    <span class="n">difference</span> <span class="o">=</span> <span class="n">numerator</span><span class="o">/</span><span class="n">denominator</span>
-    <span class="c1"># YOUR CODE ENDS HERE</span>
-    <span class="k">if</span> <span class="n">print_msg</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">difference</span> <span class="o">&gt;</span> <span class="mf">2e-7</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span> <span class="o">+</span> <span class="s2">&quot;There is a mistake in the backward propagation! difference = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[92m&quot;</span> <span class="o">+</span> <span class="s2">&quot;Your backward propagation works perfectly fine! difference = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
-    
-    <span class="k">return</span> <span class="n">difference</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span>
-<span class="n">difference</span> <span class="o">=</span> <span class="n">gradient_check</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span> <span class="n">print_msg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1">#gradient_check_test(gradient_check)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-green-intense-fg">Your backward propagation works perfectly fine! difference = 2.919335883291695e-10</span>
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Congrats, the difference is smaller than the $10^{-7}$ threshold. So you can have high confidence that you've correctly computed the gradient in <code>backward_propagation()</code>.</p>
-<p>Now, in the more general case, your cost function $J$ has more than a single 1D input. When you are training a neural network, $\theta$ actually consists of multiple matrices $W^{[l]}$ and biases $b^{[l]}$! It is important to know how to do a gradient check with higher-dimensional inputs. Let's do it!</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a name='5'></a></p>
-<h2 id="5---N-Dimensional-Gradient-Checking">5 - N-Dimensional Gradient Checking<a class="anchor-link" href="#5---N-Dimensional-Gradient-Checking">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The following figure describes the forward and backward propagation of your fraud detection model.</p>
-<p><img src="images/NDgrad_kiank.png" style="width:600px;height:400px;"></p>
-<caption><center><font color='purple'><b>Figure 2</b>: Deep neural network. LINEAR -> RELU -> LINEAR -> RELU -> LINEAR -> SIGMOID</font></center></caption><p>Let's look at your implementations for forward propagation and backward propagation.</p>
-
+<h3 id="Removing-whitespace">Removing whitespace<a class="anchor-link" href="#Removing-whitespace">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -13515,51 +13117,22 @@ You will need 3 Steps to compute this formula:<ul>
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">forward_propagation_n</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Implements the forward propagation (and computes the cost) presented in Figure 3.</span>
-<span class="sd">    </span>
-<span class="sd">    Arguments:</span>
-<span class="sd">    X -- training set for m examples</span>
-<span class="sd">    Y -- labels for m examples </span>
-<span class="sd">    parameters -- python dictionary containing your parameters &quot;W1&quot;, &quot;b1&quot;, &quot;W2&quot;, &quot;b2&quot;, &quot;W3&quot;, &quot;b3&quot;:</span>
-<span class="sd">                    W1 -- weight matrix of shape (5, 4)</span>
-<span class="sd">                    b1 -- bias vector of shape (5, 1)</span>
-<span class="sd">                    W2 -- weight matrix of shape (3, 5)</span>
-<span class="sd">                    b2 -- bias vector of shape (3, 1)</span>
-<span class="sd">                    W3 -- weight matrix of shape (1, 3)</span>
-<span class="sd">                    b3 -- bias vector of shape (1, 1)</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">    cost -- the cost function (logistic cost for one example)</span>
-<span class="sd">    cache -- a tuple with the intermediate values (Z1, A1, W1, b1, Z2, A2, W2, b2, Z3, A3, W3, b3)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">life_saving_tools</span> <span class="kn">import</span> <span class="n">Files</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">Files</span><span class="o">.</span><span class="n">FileOrganizer</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
+</pre></div>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="c1"># retrieve parameters</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">W1</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;W1&quot;</span><span class="p">]</span>
-    <span class="n">b1</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;b1&quot;</span><span class="p">]</span>
-    <span class="n">W2</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;W2&quot;</span><span class="p">]</span>
-    <span class="n">b2</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;b2&quot;</span><span class="p">]</span>
-    <span class="n">W3</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;W3&quot;</span><span class="p">]</span>
-    <span class="n">b3</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;b3&quot;</span><span class="p">]</span>
+    </div>
+</div>
+</div>
 
-    <span class="c1"># LINEAR -&gt; RELU -&gt; LINEAR -&gt; RELU -&gt; LINEAR -&gt; SIGMOID</span>
-    <span class="n">Z1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W1</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span> <span class="o">+</span> <span class="n">b1</span>
-    <span class="n">A1</span> <span class="o">=</span> <span class="n">relu</span><span class="p">(</span><span class="n">Z1</span><span class="p">)</span>
-    <span class="n">Z2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W2</span><span class="p">,</span> <span class="n">A1</span><span class="p">)</span> <span class="o">+</span> <span class="n">b2</span>
-    <span class="n">A2</span> <span class="o">=</span> <span class="n">relu</span><span class="p">(</span><span class="n">Z2</span><span class="p">)</span>
-    <span class="n">Z3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W3</span><span class="p">,</span> <span class="n">A2</span><span class="p">)</span> <span class="o">+</span> <span class="n">b3</span>
-    <span class="n">A3</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">Z3</span><span class="p">)</span>
-
-    <span class="c1"># Cost</span>
-    <span class="n">log_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">A3</span><span class="p">),</span><span class="n">Y</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">A3</span><span class="p">),</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">Y</span><span class="p">)</span>
-    <span class="n">cost</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">log_probs</span><span class="p">)</span>
-    
-    <span class="n">cache</span> <span class="o">=</span> <span class="p">(</span><span class="n">Z1</span><span class="p">,</span> <span class="n">A1</span><span class="p">,</span> <span class="n">W1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">Z2</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="n">W2</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">Z3</span><span class="p">,</span> <span class="n">A3</span><span class="p">,</span> <span class="n">W3</span><span class="p">,</span> <span class="n">b3</span><span class="p">)</span>
-    
-    <span class="k">return</span> <span class="n">cost</span><span class="p">,</span> <span class="n">cache</span>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">remove_spaces</span><span class="p">(</span><span class="nb">all</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13570,202 +13143,26 @@ You will need 3 Steps to compute this formula:<ul>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, run backward propagation.</p>
-
+<h3 id="Unzipping">Unzipping<a class="anchor-link" href="#Unzipping">&#182;</a></h3>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">backward_propagation_n</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">cache</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Implement the backward propagation presented in figure 2.</span>
-<span class="sd">    </span>
-<span class="sd">    Arguments:</span>
-<span class="sd">    X -- input datapoint, of shape (input size, 1)</span>
-<span class="sd">    Y -- true &quot;label&quot;</span>
-<span class="sd">    cache -- cache output from forward_propagation_n()</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">    gradients -- A dictionary with the gradients of the cost with respect to each parameter, activation and pre-activation variables.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="n">m</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="p">(</span><span class="n">Z1</span><span class="p">,</span> <span class="n">A1</span><span class="p">,</span> <span class="n">W1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">Z2</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="n">W2</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">Z3</span><span class="p">,</span> <span class="n">A3</span><span class="p">,</span> <span class="n">W3</span><span class="p">,</span> <span class="n">b3</span><span class="p">)</span> <span class="o">=</span> <span class="n">cache</span>
-    
-    <span class="n">dZ3</span> <span class="o">=</span> <span class="n">A3</span> <span class="o">-</span> <span class="n">Y</span>
-    <span class="n">dW3</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dZ3</span><span class="p">,</span> <span class="n">A2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="n">db3</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dZ3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    
-    <span class="n">dA2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W3</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">dZ3</span><span class="p">)</span>
-    <span class="n">dZ2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">dA2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">A2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span>
-    <span class="n">dW2</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dZ2</span><span class="p">,</span> <span class="n">A1</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="n">db2</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dZ2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    
-    <span class="n">dA1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W2</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">dZ2</span><span class="p">)</span>
-    <span class="n">dZ1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">dA1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">A1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span>
-    <span class="n">dW1</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dZ1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="n">db1</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dZ1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    
-    <span class="n">gradients</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dZ3&quot;</span><span class="p">:</span> <span class="n">dZ3</span><span class="p">,</span> <span class="s2">&quot;dW3&quot;</span><span class="p">:</span> <span class="n">dW3</span><span class="p">,</span> <span class="s2">&quot;db3&quot;</span><span class="p">:</span> <span class="n">db3</span><span class="p">,</span>
-                 <span class="s2">&quot;dA2&quot;</span><span class="p">:</span> <span class="n">dA2</span><span class="p">,</span> <span class="s2">&quot;dZ2&quot;</span><span class="p">:</span> <span class="n">dZ2</span><span class="p">,</span> <span class="s2">&quot;dW2&quot;</span><span class="p">:</span> <span class="n">dW2</span><span class="p">,</span> <span class="s2">&quot;db2&quot;</span><span class="p">:</span> <span class="n">db2</span><span class="p">,</span>
-                 <span class="s2">&quot;dA1&quot;</span><span class="p">:</span> <span class="n">dA1</span><span class="p">,</span> <span class="s2">&quot;dZ1&quot;</span><span class="p">:</span> <span class="n">dZ1</span><span class="p">,</span> <span class="s2">&quot;dW1&quot;</span><span class="p">:</span> <span class="n">dW1</span><span class="p">,</span> <span class="s2">&quot;db1&quot;</span><span class="p">:</span> <span class="n">db1</span><span class="p">}</span>
-    
-    <span class="k">return</span> <span class="n">gradients</span>
-</pre></div>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>You obtained some results on the fraud detection test set but you are not 100% sure of your model. Nobody's perfect! Let's implement gradient checking to verify if your gradients are correct.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>How does gradient checking work?</strong>.</p>
-<p>As in Section 3 and 4, you want to compare "gradapprox" to the gradient computed by backpropagation. The formula is still:</p>
-$$ \frac{\partial J}{\partial \theta} = \lim_{\varepsilon \to 0} \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon} \tag{1}$$<p>However, $\theta$ is not a scalar anymore. It is a dictionary called "parameters". The  function "<code>dictionary_to_vector()</code>" has been implemented for you. It converts the "parameters" dictionary into a vector called "values", obtained by reshaping all parameters (W1, b1, W2, b2, W3, b3) into vectors and concatenating them.</p>
-<p>The inverse function is "<code>vector_to_dictionary</code>" which outputs back the "parameters" dictionary.</p>
-<p><img src="images/dictionary_to_vector.png" style="width:600px;height:400px;"></p>
-<caption><center><font color='purple'><b>Figure 2</b>: dictionary_to_vector() and vector_to_dictionary(). You will need these functions in gradient_check_n()</font></center></caption><p>The "gradients" dictionary has also been converted into a vector "grad" using gradients_to_vector(), so you don't need to worry about that.</p>
-<p>Now, for every single parameter in your vector, you will apply the same procedure as for the gradient_check exercise. You will store each gradient approximation in a vector <code>gradapprox</code>. If the check goes as expected, each value in this approximation must match the real gradient values stored in the <code>grad</code> vector.</p>
-<p>Note that <code>grad</code> is calculated using the function <code>gradients_to_vector</code>, which uses the gradients outputs of the <code>backward_propagation_n</code> function.</p>
-<p><a name='ex-4'></a></p>
-<h3 id="Exercise-4---gradient_check_n">Exercise 4 - gradient_check_n<a class="anchor-link" href="#Exercise-4---gradient_check_n">&#182;</a></h3><p>Implement the function below.</p>
-<p><strong>Instructions</strong>: Here is pseudo-code that will help you implement the gradient check.</p>
-<p>For each i in num_parameters:</p>
-<ul>
-<li>To compute <code>J_plus[i]</code>:<ol>
-<li>Set $\theta^{+}$ to <code>np.copy(parameters_values)</code></li>
-<li>Set $\theta^{+}_i$ to $\theta^{+}_i + \varepsilon$</li>
-<li>Calculate $J^{+}_i$ using to <code>forward_propagation_n(x, y, vector_to_dictionary(</code>$\theta^{+}$ <code>))</code>.     </li>
-</ol>
-</li>
-<li>To compute <code>J_minus[i]</code>: do the same thing with $\theta^{-}$</li>
-<li>Compute $gradapprox[i] = \frac{J^{+}_i - J^{-}_i}{2 \varepsilon}$</li>
-</ul>
-<p>Thus, you get a vector gradapprox, where gradapprox[i] is an approximation of the gradient with respect to <code>parameter_values[i]</code>. You can now compare this gradapprox vector to the gradients vector from backpropagation. Just like for the 1D case (Steps 1', 2', 3'), compute: 
-$$ difference = \frac {\| grad - gradapprox \|_2}{\| grad \|_2 + \| gradapprox \|_2 } \tag{3}$$</p>
-<p><strong>Note</strong>: Use <code>np.linalg.norm</code> to get the norms</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># GRADED FUNCTION: gradient_check_n</span>
-
-<span class="k">def</span> <span class="nf">gradient_check_n</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">gradients</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">print_msg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checks if backward_propagation_n computes correctly the gradient of the cost output by forward_propagation_n</span>
-<span class="sd">    </span>
-<span class="sd">    Arguments:</span>
-<span class="sd">    parameters -- python dictionary containing your parameters &quot;W1&quot;, &quot;b1&quot;, &quot;W2&quot;, &quot;b2&quot;, &quot;W3&quot;, &quot;b3&quot;:</span>
-<span class="sd">    grad -- output of backward_propagation_n, contains gradients of the cost with respect to the parameters. </span>
-<span class="sd">    x -- input datapoint, of shape (input size, 1)</span>
-<span class="sd">    y -- true &quot;label&quot;</span>
-<span class="sd">    epsilon -- tiny shift to the input to compute approximated gradient with formula(1)</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">    difference -- difference (2) between the approximated gradient and the backward propagation gradient</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="c1"># Set-up variables</span>
-    <span class="n">parameters_values</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dictionary_to_vector</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-    
-    <span class="n">grad</span> <span class="o">=</span> <span class="n">gradients_to_vector</span><span class="p">(</span><span class="n">gradients</span><span class="p">)</span>
-    <span class="n">num_parameters</span> <span class="o">=</span> <span class="n">parameters_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">J_plus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_parameters</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="n">J_minus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_parameters</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="n">gradapprox</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_parameters</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-    
-    <span class="c1"># Compute gradapprox</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_parameters</span><span class="p">):</span>
-        
-        <span class="c1"># Compute J_plus[i]. Inputs: &quot;parameters_values, epsilon&quot;. Output = &quot;J_plus[i]&quot;.</span>
-        <span class="c1"># &quot;_&quot; is used because the function you have to outputs two parameters but we only care about the first one</span>
-        <span class="c1">#(approx. 3 lines)</span>
-        <span class="c1"># theta_plus =                                        # Step 1</span>
-        <span class="c1"># theta_plus[i] =                                     # Step 2</span>
-        <span class="c1"># J_plus[i], _ =                                     # Step 3</span>
-        <span class="c1"># YOUR CODE STARTS HERE</span>
-        <span class="n">theta_plus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">parameters_values</span><span class="p">)</span>
-        <span class="n">theta_plus</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">epsilon</span>
-        <span class="n">J_plus</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">,</span> <span class="n">_</span><span class="o">=</span> <span class="n">forward_propagation_n</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">vector_to_dictionary</span><span class="p">(</span><span class="n">theta_plus</span><span class="p">))</span>
-        <span class="c1"># YOUR CODE ENDS HERE</span>
-        
-        <span class="c1"># Compute J_minus[i]. Inputs: &quot;parameters_values, epsilon&quot;. Output = &quot;J_minus[i]&quot;.</span>
-        <span class="c1">#(approx. 3 lines)</span>
-        <span class="c1"># theta_minus =                                    # Step 1</span>
-        <span class="c1"># theta_minus[i] =                                 # Step 2        </span>
-        <span class="c1"># J_minus[i], _ =                                 # Step 3</span>
-        <span class="c1"># YOUR CODE STARTS HERE</span>
-        <span class="n">theta_minus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">parameters_values</span><span class="p">)</span>
-        <span class="n">theta_minus</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">epsilon</span>
-        <span class="n">J_minus</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">forward_propagation_n</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">vector_to_dictionary</span><span class="p">(</span><span class="n">theta_minus</span><span class="p">))</span>
-        
-        <span class="c1"># YOUR CODE ENDS HERE</span>
-        
-        <span class="c1"># Compute gradapprox[i]</span>
-        <span class="c1"># (approx. 1 line)</span>
-        <span class="c1"># gradapprox[i] = </span>
-        <span class="c1"># YOUR CODE STARTS HERE</span>
-        <span class="n">gradapprox</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">J_plus</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">J_minus</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">epsilon</span><span class="p">)</span>
-        
-        <span class="c1"># YOUR CODE ENDS HERE</span>
-    
-    <span class="c1"># Compare gradapprox to backward propagation gradients by computing difference.</span>
-    <span class="c1"># (approx. 1 line)</span>
-    <span class="c1"># numerator =                                             # Step 1&#39;</span>
-    <span class="c1"># denominator =                                           # Step 2&#39;</span>
-    <span class="c1"># difference =                                            # Step 3&#39;</span>
-    <span class="c1"># YOUR CODE STARTS HERE</span>
-    <span class="n">numerator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">grad</span><span class="o">-</span><span class="n">gradapprox</span><span class="p">)</span>
-    <span class="n">denominator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gradapprox</span><span class="p">)</span>
-    <span class="n">difference</span> <span class="o">=</span> <span class="n">numerator</span><span class="o">/</span><span class="n">denominator</span>
-    
-    <span class="c1"># YOUR CODE ENDS HERE</span>
-    <span class="k">if</span> <span class="n">print_msg</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">difference</span> <span class="o">&gt;</span> <span class="mf">2e-7</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span> <span class="o">+</span> <span class="s2">&quot;There is a mistake in the backward propagation! difference = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[92m&quot;</span> <span class="o">+</span> <span class="s2">&quot;Your backward propagation works perfectly fine! difference = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">difference</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">gradient_check_n_test_case</span><span class="p">()</span>
-
-<span class="n">cost</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">forward_propagation_n</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
-<span class="n">gradients</span> <span class="o">=</span> <span class="n">backward_propagation_n</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>
-<span class="n">difference</span> <span class="o">=</span> <span class="n">gradient_check_n</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">gradients</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-<span class="n">expected_values</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2850931567761623</span><span class="p">,</span> <span class="mf">1.1890913024229996e-07</span><span class="p">]</span>
-<span class="k">assert</span> <span class="ow">not</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="s2">&quot;You are not using np.linalg.norm for numerator or denominator&quot;</span>
-<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">difference</span><span class="p">,</span> <span class="n">expected_values</span><span class="p">)),</span> <span class="s2">&quot;Wrong value. It is not one of the expected values&quot;</span>
+<span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.zip&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unzipping </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="n">zip_ref</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">file_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span>
+            <span class="n">zip_ref</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -13782,7 +13179,14 @@ $$ difference = \frac {\| grad - gradapprox \|_2}{\| grad \|_2 + \| gradapprox \
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-green-intense-fg">Your backward propagation works perfectly fine! difference = 1.1890913024229996e-07</span>
+<pre>Unzipping Building_your_Deep_Neural_Network_Step_by_Step.zip
+Unzipping Deep_Neural_Network_-_Application.zip
+Unzipping Logistic_Regression_with_a_Neural_Network_mindset.zip
+Unzipping Planar_data_classification_with_one_hidden_layer.zip
+Unzipping Gradient_Checking.zip
+Unzipping Initialization.zip
+Unzipping Optimization_Methods.zip
+Unzipping Regularization.zip
 </pre>
 </div>
 </div>
@@ -13794,37 +13198,280 @@ $$ difference = \frac {\| grad - gradapprox \|_2}{\| grad \|_2 + \| gradapprox \
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Expected output</strong>:</p>
-<table>
-    <tr>
-        <td>  <b> There is a mistake in the backward propagation!</b>  </td>
-        <td> difference = 0.2850931567761623 </td>
-    </tr>
-</table>
+<h3 id="Deleting-zip-files">Deleting zip files<a class="anchor-link" href="#Deleting-zip-files">&#182;</a></h3>
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">send2trash</span>
+
+<span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.zip&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Deleting </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="n">send2trash</span><span class="o">.</span><span class="n">send2trash</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Deleting Building_your_Deep_Neural_Network_Step_by_Step.zip
+Deleting Deep_Neural_Network_-_Application.zip
+Deleting Logistic_Regression_with_a_Neural_Network_mindset.zip
+Deleting Planar_data_classification_with_one_hidden_layer.zip
+Deleting Gradient_Checking.zip
+Deleting Initialization.zip
+Deleting Optimization_Methods.zip
+Deleting Regularization.zip
+Deleting all_files.zip
+Deleting directory.zip
+Deleting Optimization_methods.zip
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It seems that there were errors in the <code>backward_propagation_n</code> code! Good thing you've implemented the gradient check. Go back to <code>backward_propagation</code> and try to find/correct the errors <em>(Hint: check dW2 and db1)</em>. Rerun the gradient check when you think you've fixed it. Remember, you'll need to re-execute the cell defining <code>backward_propagation_n()</code> if you modify the code.</p>
-<p>Can you get gradient check to declare your derivative computation correct? Even though this part of the assignment isn't graded, you should try to find the bug and re-run gradient check until you're convinced backprop is now correctly implemented.</p>
-<p><strong>Notes</strong></p>
-<ul>
-<li>Gradient Checking is slow! Approximating the gradient with $\frac{\partial J}{\partial \theta} \approx  \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon}$ is computationally costly. For this reason, we don't run gradient checking at every iteration during training. Just a few times to check if the gradient is correct. </li>
-<li>Gradient Checking, at least as we've presented it, doesn't work with dropout. You would usually run the gradient check algorithm without dropout to make sure your backprop is correct, then add dropout. </li>
-</ul>
-<p>Congrats! Now you can be confident that your deep learning model for fraud detection is working correctly! You can even use this to convince your CEO. :) 
-<br>
-<font color='blue'></p>
-<p><strong>What you should remember from this notebook</strong>:</p>
-<ul>
-<li>Gradient checking verifies closeness between the gradients from backpropagation and the numerical approximation of the gradient (computed using forward propagation).</li>
-<li>Gradient checking is slow, so you don't want to run it in every iteration of training. You would usually run it only to make sure your code is correct, then turn it off and use backprop for the actual learning process. </li>
-</ul>
+<h3 id="Converting-the-notes-to-HTML">Converting the notes to HTML<a class="anchor-link" href="#Converting-the-notes-to-HTML">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">life_saving_tools</span> <span class="kn">import</span> <span class="n">Files</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">Files</span><span class="o">.</span><span class="n">Notebook</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ipynb&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converting </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">export_notebook</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Converting temp.ipynb
+Converting Building_your_Deep_Neural_Network_Step_by_Step.ipynb
+Converting Building_your_Deep_Neural_Network_Step_by_Step-checkpoint.ipynb
+Converting Deep Neural Network - Application.ipynb
+Converting Deep Neural Network - Application-checkpoint.ipynb
+Converting Logistic_Regression_with_a_Neural_Network_mindset.ipynb
+Converting Logistic_Regression_with_a_Neural_Network_mindset-checkpoint.ipynb
+Converting Planar_data_classification_with_one_hidden_layer.ipynb
+Converting Planar_data_classification_with_one_hidden_layer-checkpoint.ipynb
+Converting Gradient_Checking.ipynb
+Converting Gradient_Checking-checkpoint.ipynb
+Converting Initialization.ipynb
+Converting Initialization-checkpoint.ipynb
+Converting Optimization_methods.ipynb
+Converting Optimization_methods-checkpoint.ipynb
+Converting Regularization.ipynb
+Converting Regularization-checkpoint.ipynb
+</pre>
+</div>
+</div>
 
 </div>
 </div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Adding-them-to-index.html">Adding them to index.html<a class="anchor-link" href="#Adding-them-to-index.html">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+    <span class="n">final_path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="k">if</span> <span class="s2">&quot;.ipynb_checkpoints&quot;</span> <span class="ow">in</span> <span class="n">final_path</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">final_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;li&gt;</span>
+<span class="s2">        &lt;a href=&quot;Notes/DLS/</span><span class="si">{</span><span class="n">final_path</span><span class="si">}</span><span class="s2">&quot; target = &#39;blank&#39; class = &#39;links&#39;&gt;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&lt;/a&gt;</span>
+<span class="s2">        &lt;/li&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">txt</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;li&gt;
+        &lt;a href=&#34;Notes/DLS/C1/Assignments/Building_your_Deep_Neural_Network_Step_by_Step/Building_your_Deep_Neural_Network_Step_by_Step.html&#34; target = &#39;blank&#39; class = &#39;links&#39;&gt;Building Your Deep Neural Network Step By Step&lt;/a&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+        &lt;a href=&#34;Notes/DLS/C1/Assignments/Deep_Neural_Network_-_Application/Deep Neural Network - Application.html&#34; target = &#39;blank&#39; class = &#39;links&#39;&gt;Deep Neural Network - Application&lt;/a&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+        &lt;a href=&#34;Notes/DLS/C1/Assignments/Logistic_Regression_with_a_Neural_Network_mindset/Logistic_Regression_with_a_Neural_Network_mindset.html&#34; target = &#39;blank&#39; class = &#39;links&#39;&gt;Logistic Regression With A Neural Network Mindset&lt;/a&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+        &lt;a href=&#34;Notes/DLS/C1/Assignments/Planar_data_classification_with_one_hidden_layer/Planar_data_classification_with_one_hidden_layer.html&#34; target = &#39;blank&#39; class = &#39;links&#39;&gt;Planar Data Classification With One Hidden Layer&lt;/a&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+        &lt;a href=&#34;Notes/DLS/C2/Assignments/Gradient_Checking/Gradient_Checking.html&#34; target = &#39;blank&#39; class = &#39;links&#39;&gt;Gradient Checking&lt;/a&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+        &lt;a href=&#34;Notes/DLS/C2/Assignments/Initialization/Initialization.html&#34; target = &#39;blank&#39; class = &#39;links&#39;&gt;Initialization&lt;/a&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+        &lt;a href=&#34;Notes/DLS/C2/Assignments/Optimization_Methods/Optimization_methods.html&#34; target = &#39;blank&#39; class = &#39;links&#39;&gt;Optimization Methods&lt;/a&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+        &lt;a href=&#34;Notes/DLS/C2/Assignments/Regularization/Regularization.html&#34; target = &#39;blank&#39; class = &#39;links&#39;&gt;Regularization&lt;/a&gt;
+        &lt;/li&gt;
+        
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Adding-Github-and-Colab-links-to-the-files">Adding Github and Colab links to the files<a class="anchor-link" href="#Adding-Github-and-Colab-links-to-the-files">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyperclip</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">pyperclip</span><span class="o">.</span><span class="n">paste</span><span class="p">()</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">file_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;table class=&#39;tfo-notebook-buttons&#39; align=&#39;left&#39;&gt;</span>
+<span class="s2">&lt;td style=&#39;border: none;&#39;&gt;</span>
+<span class="s2">&lt;a target=&#39;blank&#39; href=&#39;https://colab.research.google.com/github/Hari31416/Data-Sciences/blob/main/Notes/DLS/</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">?hl=en&#39;&gt;&lt;img src=&#39;https://colab.research.google.com/img/colab_favicon_256px.png&#39; width=&#39;28&#39; height=&#39;28&#39;/&gt;Run on Google Colab&lt;/a&gt;&lt;/td&gt;</span>
+<span class="s2">&lt;td style=&#39;border: none;&#39;&gt;</span>
+<span class="s2">&lt;a target=&#39;blank&#39; href=&#39;https://github.com/Hari31416/Data-Sciences/blob/main/Notes/DLS/</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&#39;&gt;&lt;img src=&#39;https://cdn.icon-icons.com/icons2/2368/PNG/512/github_logo_icon_143772.png&#39; width=&#39;28&#39; height=&#39;28&#39;/&gt;View on Github&lt;/a&gt;&lt;/td&gt;</span>
+<span class="s2">&lt;/table&gt;&quot;&quot;&quot;</span>
+
+<span class="n">pyperclip</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
 </div>
     </div>
   </div>
