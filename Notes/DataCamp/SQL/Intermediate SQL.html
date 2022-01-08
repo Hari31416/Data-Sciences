@@ -15146,6 +15146,412 @@ ON home.id = away.id;</p>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Window-Functions">Window Functions<a class="anchor-link" href="#Window-Functions">&#182;</a></h2>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Window functions are a class of functions that perform calculations on a result set that has already been generated, also referred to as a "window". You can use window functions to perform aggregate calculations without having to group your data, just as you did with a subquery in <code>SELECT</code>. You can also use them to calculate information such as running totals, rankings, and moving averages.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img src="img/02_15.png" alt=""></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="OVER()"><code>OVER()</code><a class="anchor-link" href="#OVER()">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The <code>OVER()</code> clause allows you to pass an aggregate function down a data set, similar to subqueries in <code>SELECT</code>. The <code>OVER()</code> clause offers significant benefits over subqueries in select - namely, your queries will run faster, and the <code>OVER()</code> clause has a wide range of additional functions and clauses you can include with it that we will cover later on in this chapter.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    m.id, <br>
+    c.name AS country, <br>
+    m.season,<br>
+    m.home_goal,<br>
+    m.away_goal,<br>
+    AVG(m.home_goal + m.away_goal) OVER() AS overall_avg<br>
+FROM match AS m<br>
+LEFT JOIN country AS c ON m.country_id = c.id;<br></p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above query calculates the average number of goals scored overall and then includes the aggregate value in each row using a window function.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Window functions allow you to create a RANK of information according to any variable you want to use to sort your data. When setting this up, you will need to specify what column/calculation you want to use to calculate your rank. This is done by including an <code>ORDER BY</code> clause inside the <code>OVER()</code> clause.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    l.name AS league,<br>
+    AVG(m.home_goal + m.away_goal) AS avg_goals,<br>
+    RANK() OVER(ORDER BY AVG(m.home_goal + m.away_goal)) AS league_rank<br>
+FROM league AS l<br>
+LEFT JOIN match AS m <br>
+ON l.id = m.country_id<br>
+WHERE m.season = '2011/2012'<br>
+GROUP BY l.name<br>
+ORDER BY league_rank;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The query above RANKs the average number of goals scored by each league in ascending order.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>To get this in decending order, you can use:</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    l.name AS league,<br>
+    AVG(m.home_goal + m.away_goal) AS avg_goals,<br>
+    RANK() OVER(ORDER BY AVG(m.home_goal + m.away_goal) DESC) AS league_rank<br>
+FROM league AS l<br>
+LEFT JOIN match AS m <br>
+ON l.id = m.country_id<br>
+WHERE m.season = '2011/2012'<br>
+GROUP BY l.name<br>
+ORDER BY league_rank;<br></p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="OVER-and-PARTITION-BY"><code>OVER</code> and <code>PARTITION BY</code><a class="anchor-link" href="#OVER-and-PARTITION-BY">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>A partition allows you to calculate separate values for different categories established in a partition. This is one way to calculate different aggregate values within one column of data, and pass them down a data set, instead of having to calculate them in different columns. You can also use PARTITION to calculate values broken out by multiple columns.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img src="img/02_16.png" alt=""></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT<br>
+    date,<br>
+    season,<br>
+    home_goal,<br>
+    away_goal,<br>
+    CASE WHEN hometeam_id = 8673 THEN 'home' <br>
+         ELSE 'away' END AS warsaw_location,<br>
+    AVG(home_goal) OVER(PARTITION BY season) AS season_homeavg,<br>
+    AVG(away_goal) OVER(PARTITION BY season) AS season_awayavg<br>
+FROM match<br>
+WHERE <br>
+    hometeam_id = 8673 <br>
+    OR awayteam_id = 8673 <br>
+ORDER BY (home_goal + away_goal) DESC;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The <code>PARTITION BY</code> clause can be used to break out window averages by multiple data points (columns). You can even calculate the information you want to use to partition your data!</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    date,<br>
+    season,<br>
+    home_goal,<br>
+    away_goal,<br>
+    CASE WHEN hometeam_id = 8673 THEN 'home' <br>
+         ELSE 'away' END AS warsaw_location,<br>
+    AVG(home_goal) OVER(PARTITION BY season, <br>
+            EXTRACT(month FROM date)) AS season_mo_home,<br>
+    AVG(away_goal) OVER(PARTITION BY season, <br>
+            EXTRACT(month FROM date)) AS season_mo_away<br>
+FROM match<br>
+WHERE 
+    hometeam_id = 8673<br>
+    OR awayteam_id = 8673 <br>
+ORDER BY (home_goal + away_goal) DESC;</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Sliding-windows">Sliding windows<a class="anchor-link" href="#Sliding-windows">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Sliding windows are functions that perform calculations relative to the current row of a data set. You can use sliding windows to calculate a wide variety of information that aggregates one row at a time down your data set - running totals, sums, counts, and averages in any order you need. A sliding window function contains specific functions within the OVER clause to specify the data you want to use in your calculations. Some of the keywords are:</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img src="img/02_18.png" alt=""></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img src="img/02_17.png" alt=""></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Slide-to-the-left">Slide to the left<a class="anchor-link" href="#Slide-to-the-left">&#182;</a></h4><p>Sliding windows allow you to create running calculations between any two points in a window using functions such as PRECEDING, FOLLOWING, and CURRENT ROW. You can calculate running counts, sums, averages, and other aggregate functions between any two points you specify in the data set.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    date,<br>
+    home_goal,<br>
+    away_goal,<br>
+    SUM(home_goal) OVER(ORDER BY date <br>
+         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total,<br>
+    AVG(home_goal) OVER(ORDER BY date <br>
+         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)  AS running_avg<br>
+FROM match<br>
+WHERE <br>
+    hometeam_id = 9908 <br>
+    AND season = '2011/2012';<br></p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The above query calculates the running total and average goals scored by the FC Utrecht team in 2011/2012.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Slide-to-the-right">Slide to the right<a class="anchor-link" href="#Slide-to-the-right">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Here, we will slightly modify the query from the previous exercise by sorting the data set in reverse order and calculating a backward running total from the CURRENT ROW to the end of the data set (earliest record).</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    date,<br>
+    home_goal,<br>
+    away_goal,<br>
+    SUM(home_goal) OVER(ORDER BY date DESC<br>
+         ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) AS running_total,<br>
+    AVG(home_goal) OVER(ORDER BY date DESC<br>
+         ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) AS running_avg<br>
+FROM match<br>
+WHERE <br>
+    awayteam_id = 9908 <br>
+    AND season = '2011/2012';</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Final-Exercise">Final Exercise<a class="anchor-link" href="#Final-Exercise">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Here, we will be using all of the concepts listed above to generate a list of matches in which Manchester United was defeated during the 2014/2015 English Premier League season.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<ol>
+<li>Step I</li>
+</ol>
+<p>Create the first query that filters for matches where Manchester United played as the home team. This will become a common table expression in a later exercise.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    m.id, <br>
+    t.team_long_name,<br>
+    -- Identify matches as home/away wins or ties<br>
+    CASE WHEN m.home_goal &gt; m.away_goal THEN 'MU Win'<br>
+        WHEN m.home_goal &lt; m.away_goal THEN 'MU Loss'<br>
+        ELSE 'Tie' END AS outcome<br>
+FROM match AS m<br>
+-- Left join team on the home team ID and team API id<br>
+LEFT JOIN team AS t <br>
+ON m.hometeam_id = t.team_api_id<br>
+WHERE <br>
+    -- Filter for 2014/2015 and Manchester United as the home team<br>
+    m.season = '2014/2015'<br>
+    AND t.team_long_name = 'Manchester United';</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<ol>
+<li>Step II</li>
+</ol>
+<p>We'll to a similar query to get the matches where Manchester United played as the away team.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>SELECT <br>
+    m.id, <br>
+    t.team_long_name,<br>
+    -- Identify matches as home/away wins or ties<br>
+    CASE WHEN m.home_goal &lt; m.away_goal THEN 'MU Win'<br>
+        WHEN m.home_goal &gt; m.away_goal THEN 'MU Loss'<br>
+        ELSE 'Tie' END AS outcome<br>
+FROM match AS m<br>
+-- Left join team on the home team ID and team API id<br>
+LEFT JOIN team AS t <br>
+ON m.awayteam_id = t.team_api_id<br>
+WHERE <br>
+    -- Filter for 2014/2015 and Manchester United as the home team<br>
+    m.season = '2014/2015'<br>
+    AND t.team_long_name = 'Manchester United';</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<ol>
+<li>Step III</li>
+</ol>
+<p>We'll use the above two queries a common table expression to get a list of matches played by Manchester United during the 2014/2015 English Premier League season.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>-- Set up the home team CTE<br>
+WITH home AS (<br>
+  SELECT m.id, t.team_long_name,<br>
+      CASE WHEN m.home_goal &gt; m.away_goal THEN 'MU Win'<br>
+           WHEN m.home_goal &lt; m.away_goal THEN 'MU Loss' <br>
+           ELSE 'Tie' END AS outcome<br>
+  FROM match AS m<br>
+  LEFT JOIN team AS t ON m.hometeam_id = t.team_api_id),<br>
+-- Set up the away team CTE<br>
+away AS (<br>
+  SELECT m.id, t.team_long_name,<br>
+      CASE WHEN m.home_goal &gt; m.away_goal THEN 'MU Loss'<br>
+           WHEN m.home_goal &lt; m.away_goal THEN 'MU Win' <br>
+           ELSE 'Tie' END AS outcome<br>
+  FROM match AS m<br>
+  LEFT JOIN team AS t ON m.awayteam_id = t.team_api_id)<br>
+-- Select team names, the date and goals<br>
+SELECT DISTINCT<br>
+    m.date,<br>
+    home.team_long_name AS home_team,<br>
+    away.team_long_name AS away_team,<br>
+    m.home_goal, m.away_goal<br>
+-- Join the CTEs onto the match table<br>
+FROM match AS m<br>
+LEFT JOIN home ON m.id = home.id<br>
+LEFT JOIN away ON m.id = away.id<br>
+WHERE m.season = '2014/2015'<br>
+      AND (home.team_long_name = 'Manchester United' <br>
+           OR away.team_long_name = 'Manchester United');</p>
+</blockquote>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<ol>
+<li>Step IV</li>
+</ol>
+<p>Here, we'll answer the question: how badly did Manchester United lose in each match?</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<blockquote><p>-- Set up the home team CTE<br>
+WITH home AS (<br>
+  SELECT m.id, t.team_long_name,<br>
+      CASE WHEN m.home_goal &gt; m.away_goal THEN 'MU Win'<br>
+           WHEN m.home_goal &lt; m.away_goal THEN 'MU Loss' <br>
+           ELSE 'Tie' END AS outcome<br>
+  FROM match AS m<br>
+  LEFT JOIN team AS t ON m.hometeam_id = t.team_api_id),<br>
+-- Set up the away team CTE<br>
+away AS (<br>
+  SELECT m.id, t.team_long_name,<br>
+      CASE WHEN m.home_goal &gt; m.away_goal THEN 'MU Loss'<br>
+           WHEN m.home_goal &lt; m.away_goal THEN 'MU Win' <br>
+           ELSE 'Tie' END AS outcome<br>
+  FROM match AS m<br>
+  LEFT JOIN team AS t ON m.awayteam_id = t.team_api_id)<br>
+-- Select team names, the date and goals<br>
+SELECT DISTINCT<br>
+    m.date,<br>
+    home.team_long_name AS home_team,<br>
+    away.team_long_name AS away_team,<br>
+    m.home_goal, m.away_goal,<br>
+    RANK() OVER(ORDER BY ABS(home_goal - away_goal) DESC) as match_rank<br>
+-- Join the CTEs onto the match table<br>
+FROM match AS m<br>
+LEFT JOIN home ON m.id = home.id<br>
+LEFT JOIN away ON m.id = away.id<br>
+WHERE m.season = '2014/2015'<br>
+      AND ((home.team_long_name = 'Manchester United' AND home.outcome = 'MU Loss')<br>
+      OR (away.team_long_name = 'Manchester United' AND away.outcome = 'MU Loss'));</p>
+</blockquote>
 
 </div>
 </div>
