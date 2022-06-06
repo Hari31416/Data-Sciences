@@ -1,3 +1,4 @@
 *dataset
-*images
+# *images
 *.pdf
+!nb_images/
