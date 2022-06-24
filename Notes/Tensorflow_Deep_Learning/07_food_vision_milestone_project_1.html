@@ -29,29 +29,29 @@
 </script>
 
 <style type="text/css">
-  pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 .highlight .hll { background-color: #ffffcc }
 .highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #008000; font-weight: bold } /* Keyword */
 .highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
 .highlight .gd { color: #A00000 } /* Generic.Deleted */
 .highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gr { color: #E40000 } /* Generic.Error */
 .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
 .highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
 .highlight .gs { font-weight: bold } /* Generic.Strong */
 .highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
@@ -64,15 +64,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .kt { color: #B00040 } /* Keyword.Type */
 .highlight .m { color: #666666 } /* Literal.Number */
 .highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .na { color: #687822 } /* Name.Attribute */
 .highlight .nb { color: #008000 } /* Name.Builtin */
 .highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
 .highlight .no { color: #880000 } /* Name.Constant */
 .highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
 .highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nl { color: #767600 } /* Name.Label */
 .highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
 .highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
 .highlight .nv { color: #19177C } /* Name.Variable */
@@ -89,11 +89,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
 .highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
 .highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
 .highlight .s1 { color: #BA2121 } /* Literal.String.Single */
 .highlight .ss { color: #19177C } /* Literal.String.Symbol */
 .highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
@@ -13131,6 +13131,38 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p><h1 id="Contents">Contents<a href="#Contents"></a></h1>
+        <ol>
+        <li><a class="" href="#07.-Milestone-Project-1:-🍔👁-Food-Vision-Big™">Milestone Project 1: 🍔👁 Food Vision Big™</a></li></p>
+<ol><li><a class="" href="#What-we're-going-to-cover">What we're going to cover</a></li>
+<li><a class="" href="#How-you-should-approach-this-notebook">How you should approach this notebook</a></li>
+<li><a class="" href="#Check-GPU">Check GPU</a></li>
+<li><a class="" href="#Get-helper-functions">Get helper functions</a></li>
+<li><a class="" href="#Use-TensorFlow-Datasets-to-Download-Data">Use TensorFlow Datasets to Download Data</a></li>
+<ol><li><a class="" href="#Exploring-the-Food101-data-from-TensorFlow-Datasets">Exploring the Food101 data from TensorFlow Datasets</a></li>
+<li><a class="" href="#Plot-an-image-from-TensorFlow-Datasets">Plot an image from TensorFlow Datasets</a></li>
+</ol><li><a class="" href="#Create-preprocessing-functions-for-our-data">Create preprocessing functions for our data</a></li>
+<li><a class="" href="#Batch-&amp;-prepare-datasets">Batch & prepare datasets</a></li>
+<li><a class="" href="#Create-modelling-callbacks">Create modelling callbacks</a></li>
+<li><a class="" href="#Setup-mixed-precision-training">Setup mixed precision training</a></li>
+<li><a class="" href="#Build-feature-extraction-model">Build feature extraction model</a></li>
+<li><a class="" href="#Checking-layer-dtype-policies-(are-we-using-mixed-precision?)">Checking layer dtype policies (are we using mixed precision?)</a></li>
+<li><a class="" href="#Fit-the-feature-extraction-model">Fit the feature extraction model</a></li>
+<li><a class="" href="#Load-and-evaluate-checkpoint-weights">Load and evaluate checkpoint weights</a></li>
+<li><a class="" href="#Save-the-whole-model-to-file">Save the whole model to file</a></li>
+<li><a class="" href="#Preparing-our-model's-layers-for-fine-tuning">Preparing our model's layers for fine-tuning</a></li>
+<li><a class="" href="#A-couple-more-callbacks">A couple more callbacks</a></li>
+<li><a class="" href="#Download-fine-tuned-model-from-Google-Storage">Download fine-tuned model from Google Storage</a></li>
+<li><a class="" href="#View-training-results-on-TensorBoard">View training results on TensorBoard</a></li>
+<li><a class="" href="#🛠-Exercises">🛠 Exercises</a></li>
+<li><a class="" href="#📖-Extra-curriculum">📖 Extra-curriculum</a></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="07.-Milestone-Project-1:-&#127828;&#128065;-Food-Vision-Big&#8482;">07. Milestone Project 1: &#127828;&#128065; Food Vision Big&#8482;<a class="anchor-link" href="#07.-Milestone-Project-1:-&#127828;&#128065;-Food-Vision-Big&#8482;">&#182;</a></h1><p>In the previous notebook (<a href="https://github.com/mrdbourke/tensorflow-deep-learning/blob/main/06_transfer_learning_in_tensorflow_part_3_scaling_up.ipynb">transfer learning part 3: scaling up</a>) we built Food Vision mini: a transfer learning model which beat the original results of the <a href="https://data.vision.ee.ethz.ch/cvl/datasets_extra/food-101/">Food101 paper</a> with only 10% of the data.</p>
 <p>But you might be wondering, what would happen if we used all the data?</p>
 <p>Well, that's what we're going to find out in this notebook!</p>
@@ -13514,9 +13546,9 @@ helper_functions.py 100%[===================&gt;]   9.09K  --.-KB/s    in 0s
 
  
  
-<div id="dc26cca6-c2fc-4388-8bdd-8b534e48e659" class="output_subarea output_widget_view ">
+<div id="73e55555-4bbb-42ec-9860-56744b97a77e" class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#dc26cca6-c2fc-4388-8bdd-8b534e48e659');
+var element = $('#73e55555-4bbb-42ec-9860-56744b97a77e');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "c464cf7f692747dd8a9e5c224b72e683", "version_major": 2, "version_minor": 0}
@@ -13535,9 +13567,9 @@ var element = $('#dc26cca6-c2fc-4388-8bdd-8b534e48e659');
 
  
  
-<div id="8a4af552-9cf9-4178-ae58-3c8b099d2ba8" class="output_subarea output_widget_view ">
+<div id="30fd98e6-3442-475e-9c75-c1bd35a285ff" class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#8a4af552-9cf9-4178-ae58-3c8b099d2ba8');
+var element = $('#30fd98e6-3442-475e-9c75-c1bd35a285ff');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "116932efaceb4e6889b9e9a7585a851f", "version_major": 2, "version_minor": 0}
@@ -13556,9 +13588,9 @@ var element = $('#8a4af552-9cf9-4178-ae58-3c8b099d2ba8');
 
  
  
-<div id="9663f00d-cdff-4835-91e5-bccffd60f04a" class="output_subarea output_widget_view ">
+<div id="aa3dc03c-f20a-4d38-b588-95a094b9474a" class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#9663f00d-cdff-4835-91e5-bccffd60f04a');
+var element = $('#aa3dc03c-f20a-4d38-b588-95a094b9474a');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "16688ead8185417fbe6acf39649c222a", "version_major": 2, "version_minor": 0}
@@ -13593,9 +13625,9 @@ var element = $('#9663f00d-cdff-4835-91e5-bccffd60f04a');
 
  
  
-<div id="f6134850-346c-4008-9423-d5e1a2ad97e4" class="output_subarea output_widget_view ">
+<div id="8258299e-6af8-4093-9af9-bfe5bcc4f672" class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#f6134850-346c-4008-9423-d5e1a2ad97e4');
+var element = $('#8258299e-6af8-4093-9af9-bfe5bcc4f672');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "da96cbabe8ff449388e052dd55213653", "version_major": 2, "version_minor": 0}
@@ -13626,9 +13658,9 @@ Shuffling and writing examples to /root/tensorflow_datasets/food101/2.0.0.incomp
 
  
  
-<div id="53190073-d458-4b52-be75-2fbcae111a7c" class="output_subarea output_widget_view ">
+<div id="01837f0d-256b-4f74-8471-dabbb2f0d564" class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#53190073-d458-4b52-be75-2fbcae111a7c');
+var element = $('#01837f0d-256b-4f74-8471-dabbb2f0d564');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "308c42badc014391aaee6b1beb47dbf6", "version_major": 2, "version_minor": 0}
@@ -13647,9 +13679,9 @@ var element = $('#53190073-d458-4b52-be75-2fbcae111a7c');
 
  
  
-<div id="479cb229-7086-4993-a481-8a0bae6cb144" class="output_subarea output_widget_view ">
+<div id="b9e5e780-b138-459b-b98b-421a60c32421" class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#479cb229-7086-4993-a481-8a0bae6cb144');
+var element = $('#b9e5e780-b138-459b-b98b-421a60c32421');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "0624ceb3768e4c62a220b188c7ed1141", "version_major": 2, "version_minor": 0}
@@ -13679,9 +13711,9 @@ var element = $('#479cb229-7086-4993-a481-8a0bae6cb144');
 
  
  
-<div id="c2371b04-6cf8-4ecb-9f6b-2ec8b62f2ec3" class="output_subarea output_widget_view ">
+<div id="3c544383-ee6a-40eb-934d-93ec4979783b" class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#c2371b04-6cf8-4ecb-9f6b-2ec8b62f2ec3');
+var element = $('#3c544383-ee6a-40eb-934d-93ec4979783b');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "8a925d410ebb413a808ce40f12e7d91e", "version_major": 2, "version_minor": 0}

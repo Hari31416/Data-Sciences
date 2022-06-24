@@ -6,29 +6,29 @@
 <title>01 Neural Network Regression In Tensorflow</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 <style type="text/css">
-  pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 .highlight .hll { background-color: #ffffcc }
 .highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #008000; font-weight: bold } /* Keyword */
 .highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
 .highlight .gd { color: #A00000 } /* Generic.Deleted */
 .highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gr { color: #E40000 } /* Generic.Error */
 .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
 .highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
 .highlight .gs { font-weight: bold } /* Generic.Strong */
 .highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
@@ -41,15 +41,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .kt { color: #B00040 } /* Keyword.Type */
 .highlight .m { color: #666666 } /* Literal.Number */
 .highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .na { color: #687822 } /* Name.Attribute */
 .highlight .nb { color: #008000 } /* Name.Builtin */
 .highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
 .highlight .no { color: #880000 } /* Name.Constant */
 .highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
 .highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nl { color: #767600 } /* Name.Label */
 .highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
 .highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
 .highlight .nv { color: #19177C } /* Name.Variable */
@@ -66,11 +66,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
 .highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
 .highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
 .highlight .s1 { color: #BA2121 } /* Literal.String.Single */
 .highlight .ss { color: #19177C } /* Literal.String.Symbol */
 .highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
@@ -13108,6 +13108,40 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p><h1 id="Contents">Contents<a href="#Contents"></a></h1>
+        <ol>
+        <li><a class="" href="#01.-Neural-Network-Regression-with-TensorFlow">Neural Network Regression with TensorFlow</a></li></p>
+<ol><li><a class="" href="#What-we're-going-to-cover">What we're going to cover</a></li>
+<li><a class="" href="#How-you-can-use-this-notebook">How you can use this notebook</a></li>
+<li><a class="" href="#Typical-architecture-of-a-regresison-neural-network">Typical architecture of a regresison neural network</a></li>
+<li><a class="" href="#Creating-data-to-view-and-fit">Creating data to view and fit</a></li>
+<li><a class="" href="#Regression-input-shapes-and-output-shapes">Regression input shapes and output shapes</a></li>
+<li><a class="" href="#Steps-in-modelling-with-TensorFlow">Steps in modelling with TensorFlow</a></li>
+<li><a class="" href="#Improving-a-model">Improving a model</a></li>
+<li><a class="" href="#Evaluating-a-model">Evaluating a model</a></li>
+<ol><li><a class="" href="#Visualize,-visualize,-visualize">Visualize, visualize, visualize</a></li>
+</ol><li><a class="" href="#Split-data-into-training/test-set">Split data into training/test set</a></li>
+<li><a class="" href="#Visualizing-the-data">Visualizing the data</a></li>
+<li><a class="" href="#Visualizing-the-model">Visualizing the model</a></li>
+<li><a class="" href="#Visualizing-the-predictions">Visualizing the predictions</a></li>
+<li><a class="" href="#Evaluating-predictions">Evaluating predictions</a></li>
+<li><a class="" href="#Running-experiments-to-improve-a-model">Running experiments to improve a model</a></li>
+<li><a class="" href="#Comparing-results">Comparing results</a></li>
+<li><a class="" href="#Tracking-your-experiments">Tracking your experiments</a></li>
+<li><a class="" href="#Saving-a-model">Saving a model</a></li>
+<li><a class="" href="#Loading-a-model">Loading a model</a></li>
+<li><a class="" href="#Downloading-a-model-(from-Google-Colab)">Downloading a model (from Google Colab)</a></li>
+<li><a class="" href="#A-larger-example">A larger example</a></li>
+<li><a class="" href="#Preprocessing-data-(normalization-and-standardization)">Preprocessing data (normalization and standardization)</a></li>
+<li><a class="" href="#🛠-Exercises">🛠 Exercises</a></li>
+<li><a class="" href="#📖-Extra-curriculum">📖 Extra curriculum</a></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="01.-Neural-Network-Regression-with-TensorFlow">01. Neural Network Regression with TensorFlow<a class="anchor-link" href="#01.-Neural-Network-Regression-with-TensorFlow">&#182;</a></h1><p>There are many definitions for a <a href="https://en.wikipedia.org/wiki/Regression_analysis">regression problem</a> but in our case, we're going to simplify it to be: predicting a number.</p>
 <p>For example, you might want to:</p>
 <ul>
@@ -16497,9 +16531,9 @@ _________________________________________________________________
 
 
 
-<div id="7f66cec0-cc63-4809-882b-da1b3a57f8ef" class="output_subarea output_javascript ">
+<div id="845b2a24-b46a-4b3f-81b1-9227f2b1d285" class="output_subarea output_javascript ">
 <script type="text/javascript">
-var element = $('#7f66cec0-cc63-4809-882b-da1b3a57f8ef');
+var element = $('#845b2a24-b46a-4b3f-81b1-9227f2b1d285');
 
     async function download(id, filename, size) {
       if (!google.colab.kernel.accessAllowed) {
@@ -16554,9 +16588,9 @@ var element = $('#7f66cec0-cc63-4809-882b-da1b3a57f8ef');
 
 
 
-<div id="f76816f1-d8f0-45d4-88ed-a7ffc95b5cbd" class="output_subarea output_javascript ">
+<div id="9d378d62-c919-4f78-bb8e-73ca21b41014" class="output_subarea output_javascript ">
 <script type="text/javascript">
-var element = $('#f76816f1-d8f0-45d4-88ed-a7ffc95b5cbd');
+var element = $('#9d378d62-c919-4f78-bb8e-73ca21b41014');
 download("download_e4f38d05-ab4b-4b6d-8e64-0d1717768680", "best_model_HDF5_format.h5", 17872)
 </script>
 </div>

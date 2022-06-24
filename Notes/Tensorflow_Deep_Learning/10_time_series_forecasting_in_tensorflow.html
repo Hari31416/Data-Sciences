@@ -6,29 +6,29 @@
 <title>10 Time Series Forecasting In Tensorflow</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 <style type="text/css">
-  pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 .highlight .hll { background-color: #ffffcc }
 .highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #008000; font-weight: bold } /* Keyword */
 .highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
 .highlight .gd { color: #A00000 } /* Generic.Deleted */
 .highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gr { color: #E40000 } /* Generic.Error */
 .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
 .highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
 .highlight .gs { font-weight: bold } /* Generic.Strong */
 .highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
@@ -41,15 +41,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .kt { color: #B00040 } /* Keyword.Type */
 .highlight .m { color: #666666 } /* Literal.Number */
 .highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .na { color: #687822 } /* Name.Attribute */
 .highlight .nb { color: #008000 } /* Name.Builtin */
 .highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
 .highlight .no { color: #880000 } /* Name.Constant */
 .highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
 .highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nl { color: #767600 } /* Name.Label */
 .highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
 .highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
 .highlight .nv { color: #19177C } /* Name.Variable */
@@ -66,11 +66,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
 .highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
 .highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
 .highlight .s1 { color: #BA2121 } /* Literal.String.Single */
 .highlight .ss { color: #19177C } /* Literal.String.Symbol */
 .highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
@@ -13102,6 +13102,70 @@ div#notebook {
 <td style='border: none;'>
 <a target='blank' href='https://github.com/Hari31416/blob/main/Notes/Tensorflow_Deep_Learning/10_time_series_forecasting_in_tensorflow.ipynb'><img src='https://cdn.icon-icons.com/icons2/2368/PNG/512/github_logo_icon_143772.png' width='28' height='28'/>View on Github</a></td>
 </table>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><h1 id="Contents">Contents<a href="#Contents"></a></h1>
+        <ol>
+        <li><a class="" href="#10.-Milestone-Project-3:-Time-series-forecasting-in-TensorFlow-(BitPredict-💰📈)">Milestone Project 3: Time series forecasting in TensorFlow (BitPredict 💰📈)</a></li></p>
+<ol><li><a class="" href="#What-is-a-time-series-problem?">What is a time series problem?</a></li>
+<li><a class="" href="#What-we're-going-to-cover">What we're going to cover</a></li>
+<li><a class="" href="#How-you-can-use-this-notebook">How you can use this notebook</a></li>
+<li><a class="" href="#Check-for-GPU">Check for GPU</a></li>
+<li><a class="" href="#Get-data">Get data</a></li>
+<ol><li><a class="" href="#Importing-time-series-data-with-pandas">Importing time series data with pandas</a></li>
+<li><a class="" href="#Importing-time-series-data-with-Python's-CSV-module">Importing time series data with Python's CSV module</a></li>
+</ol><li><a class="" href="#Format-Data-Part-1:-Creatining-train-and-test-sets-for-time-series-data">Format Data Part 1: Creatining train and test sets for time series data</a></li>
+<ol><li><a class="" href="#Create-train-&amp;-test-sets-for-time-series-(the-wrong-way)">Create train & test sets for time series (the wrong way)</a></li>
+<li><a class="" href="#Create-train-&amp;-test-sets-for-time-series-(the-right-way)">Create train & test sets for time series (the right way)</a></li>
+<li><a class="" href="#Create-a-plotting-function">Create a plotting function</a></li>
+</ol><li><a class="" href="#Modelling-Experiments">Modelling Experiments</a></li>
+<li><a class="" href="#Model-0:-Naïve-forecast-(baseline)">Model 0: Naïve forecast (baseline)</a></li>
+<li><a class="" href="#Evaluating-a-time-series-model">Evaluating a time series model</a></li>
+<ol><li><a class="" href="#Scale-dependent-errors">Scale-dependent errors</a></li>
+<li><a class="" href="#Percentage-errors">Percentage errors</a></li>
+<li><a class="" href="#Scaled-errors">Scaled errors</a></li>
+</ol><li><a class="" href="#Other-kinds-of-time-series-forecasting-models-which-can-be-used-for-baselines-and-actual-forecasts">Other kinds of time series forecasting models which can be used for baselines and actual forecasts</a></li>
+<li><a class="" href="#Format-Data-Part-2:-Windowing-dataset">Format Data Part 2: Windowing dataset</a></li>
+<li><a class="" href="#Turning-windows-into-training-and-test-sets">Turning windows into training and test sets</a></li>
+<li><a class="" href="#Make-a-modelling-checkpoint">Make a modelling checkpoint</a></li>
+<li><a class="" href="#Model-1:-Dense-model-(window-=-7,-horizon-=-1)">Model 1: Dense model (window = 7, horizon = 1)</a></li>
+<li><a class="" href="#Making-forecasts-with-a-model-(on-the-test-dataset)">Making forecasts with a model (on the test dataset)</a></li>
+<li><a class="" href="#Model-2:-Dense-(window-=-30,-horizon-=-1)">Model 2: Dense (window = 30, horizon = 1)</a></li>
+<li><a class="" href="#Model-3:-Dense-(window-=-30,-horizon-=-7)">Model 3: Dense (window = 30, horizon = 7)</a></li>
+<li><a class="" href="#Make-our-evaluation-function-work-for-larger-horizons">Make our evaluation function work for larger horizons</a></li>
+<li><a class="" href="#Which-of-our-models-is-performing-best-so-far?">Which of our models is performing best so far?</a></li>
+<li><a class="" href="#Model-4:-Conv1D">Model 4: Conv1D</a></li>
+<li><a class="" href="#Model-5:-RNN-(LSTM)">Model 5: RNN (LSTM)</a></li>
+<li><a class="" href="#Make-a-multivariate-time-series">Make a multivariate time series</a></li>
+<li><a class="" href="#Making-a-windowed-dataset-with-pandas">Making a windowed dataset with pandas</a></li>
+<li><a class="" href="#Model-6:-Dense-(multivariate-time-series)">Model 6: Dense (multivariate time series)</a></li>
+<li><a class="" href="#Model-7:-N-BEATS-algorithm">Model 7: N-BEATS algorithm</a></li>
+<ol><li><a class="" href="#Building-and-testing-an-N-BEATS-block-layer">Building and testing an N-BEATS block layer</a></li>
+<li><a class="" href="#Preparing-data-for-the-N-BEATS-algorithm-using-tf.data">Preparing data for the N-BEATS algorithm using tf.data</a></li>
+<li><a class="" href="#Setting-up-hyperparameters-for-N-BEATS-algorithm">Setting up hyperparameters for N-BEATS algorithm</a></li>
+<li><a class="" href="#Getting-ready-for-residual-connections">Getting ready for residual connections</a></li>
+<li><a class="" href="#Building,-compiling-and-fitting-the-N-BEATS-algorithm">Building, compiling and fitting the N-BEATS algorithm</a></li>
+<li><a class="" href="#Plotting-the-N-BEATS-architecture-we've-created">Plotting the N-BEATS architecture we've created</a></li>
+</ol><li><a class="" href="#Model-8:-Creating-an-ensemble-(stacking-different-models-together)">Model 8: Creating an ensemble (stacking different models together)</a></li>
+<ol><li><a class="" href="#Constructing-and-fitting-an-ensemble-of-models-(using-different-loss-functions)">Constructing and fitting an ensemble of models (using different loss functions)</a></li>
+<li><a class="" href="#Making-predictions-with-an-ensemble-model">Making predictions with an ensemble model</a></li>
+<li><a class="" href="#Plotting-the-prediction-intervals-(uncertainty-estimates)-of-our-ensemble">Plotting the prediction intervals (uncertainty estimates) of our ensemble</a></li>
+</ol><li><a class="" href="#Aside:-two-types-of-uncertainty-(coconut-and-subway)">Aside: two types of uncertainty (coconut and subway)</a></li>
+<ol><li><a class="" href="#Uncertainty-in-dating">Uncertainty in dating</a></li>
+<li><a class="" href="#Learning-more-on-uncertainty">Learning more on uncertainty</a></li>
+</ol><li><a class="" href="#Model-9:-Train-a-model-on-the-full-historical-data-to-make-predictions-into-future">Model 9: Train a model on the full historical data to make predictions into future</a></li>
+<ol><li><a class="" href="#Make-predictions-on-the-future">Make predictions on the future</a></li>
+<li><a class="" href="#Plot-future-forecasts">Plot future forecasts</a></li>
+</ol><li><a class="" href="#Model-10:-Why-forecasting-is-BS-(the-turkey-problem-🦃)">Model 10: Why forecasting is BS (the turkey problem 🦃)</a></li>
+<ol><li><a class="" href="#Building-a-turkey-model-(model-to-predict-on-turkey-data)">Building a turkey model (model to predict on turkey data)</a></li>
+</ol><li><a class="" href="#Compare-Models">Compare Models</a></li>
+<li><a class="" href="#🛠-Exercises">🛠 Exercises</a></li>
+<li><a class="" href="#📖-Extra-curriculum">📖 Extra-curriculum</a></li>
+</ol>
 </div>
 </div>
 </div>
