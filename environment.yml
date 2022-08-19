@@ -1,0 +1,28 @@
+name: data-science
+
+dependencies:
+  - python=3.9
+  - pip
+  - numpy
+  - scipy
+  - matplotlib
+  - pandas
+  - seaborn
+  - jupyter
+  - notebook
+  - ipython
+  - pip:
+      - plotly
+      - cufflinks
+      - beautifulsoup4
+      - lxml
+      - selenium
+      - tensorflow-cpu
+      - keras
+      - scikit-learn
+      - tqdm
+      - twilio
+      - nbformat
+      - nbconvert
+      - pyperclip
+      - send2trash

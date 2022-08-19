@@ -1,0 +1,6 @@
+*pycache*
+*checkpoints*
+.env
+temp.html
+.vscode
+tools
