@@ -30,8 +30,9 @@ def train_step(model, loss_fn, optimizer, x, y):
 
 def test_step(model, loss_fn, x, y):
     model.eval()
-    yhat = model(x)
-    l = loss_fn(yhat, y)
+    with torch.inference_mode():
+        yhat = model(x)
+        l = loss_fn(yhat, y)
     return l.item()
 
 

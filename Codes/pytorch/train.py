@@ -1,20 +1,27 @@
 import argparse
+import time
 from model import *
 from utils import *
 
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def train(epochs, model, loss, optimizer, train_loader, test_loader):
+
+def train(epochs, model, loss_fn, optimizer, train_loader, test_loader):
     for epoch in range(epochs):
         train_loss = 0
         test_loss = 0
         for i, (x, y) in enumerate(train_loader):
-            train_loss += train_step(model, loss, optimizer, x, y)
+            x = x.to(DEVICE)
+            y = y.to(DEVICE)
+            train_loss += train_step(model, loss_fn, optimizer, x, y)
             b_progress = batch_progress(i, len(train_loader), train_loss / (i + 1))
             print(b_progress, end="\r")
 
         train_acc = accuracy(model, x, y)
         for x, y in test_loader:
-            test_loss += test_step(model, loss, x, y)
+            x = x.to(DEVICE)
+            y = y.to(DEVICE)
+            test_loss += test_step(model, loss_fn, x, y)
         test_acc = accuracy(model, x, y)
         train_loss /= len(train_loader)
         test_loss /= len(test_loader)
@@ -57,6 +64,7 @@ def load_args():
 
 
 def main():
+    print(f"Using device: {DEVICE}")
     args = load_args()
     hidden_units = args.hidden_units
     color_channel = args.color_channel
@@ -77,6 +85,7 @@ def main():
         raise ValueError("Invalid model name")
 
     # print the model
+    model = model.to(DEVICE)
     print(model)
 
     # Load data
@@ -93,4 +102,7 @@ def main():
 
 
 if __name__ == "__main__":
+    tic = time.time()
     main()
+    toc = time.time()
+    print(f"Time elapsed: {toc - tic:.2f} seconds")
