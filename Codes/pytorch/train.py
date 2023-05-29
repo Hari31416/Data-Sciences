@@ -14,7 +14,12 @@ def train(epochs, model, loss_fn, optimizer, train_loader, test_loader):
             x = x.to(DEVICE)
             y = y.to(DEVICE)
             train_loss += train_step(model, loss_fn, optimizer, x, y)
-            b_progress = batch_progress(i, len(train_loader), train_loss / (i + 1))
+            b_progress = batch_progress(
+                i,
+                len(train_loader),
+                train_loss / (i + 1),
+                metrics=None,
+            )
             print(b_progress, end="\r")
 
         train_acc = accuracy(model, x, y)

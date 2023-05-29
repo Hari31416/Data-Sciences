@@ -50,7 +50,7 @@ def predict(model, x):
     return yhat
 
 
-def batch_progress(cur_batch, all_batch, loss):
+def batch_progress(cur_batch, all_batch, loss, metrics):
     """Prints an arrow showing progress about the current batch.
 
     Parameters
@@ -75,7 +75,9 @@ def batch_progress(cur_batch, all_batch, loss):
     progress = int((cur_batch + 1) / all_batch * len_progress_bar)
     progress_bar = "=" * progress + "-" * (len_progress_bar - progress)
     digits = len(str(all_batch))
-    return f"Batch: {cur_batch:>{digits}}/{all_batch:>{digits}} | [{progress_bar}] | Loss: {loss:.4f}"
+    text = f"Batch: {cur_batch:>{digits}}/{all_batch:>{digits}} | [{progress_bar}] | Loss: {loss:.4f}"
+    for key, value in metrics.items():
+        text += f" | {key}: {value:.4f}"
 
 
 def epoch_progress(epoch, all_epoch, metrics):
