@@ -33,7 +33,7 @@ class TorchTrain:
 
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    def __init__(self, model, optimizer, loss_function, metrics=None) -> None:
+    def __init__(self, model, optimizer, loss_function, metrics=None, scheduler = None) -> None:
         """Initialize the TorchTrain object.
 
         Parameters
@@ -48,12 +48,15 @@ class TorchTrain:
             The metrics to evaluate during training. If a dictionary, the keys are the metric names
             and the values are functions that take in `yhat` and `y` and return a metric value.
             If a callable, it should take in `yhat` and `y` and return a metric value. Defaults to None.
+        scheduler : torch.optim.lr_scheduler, optional
+            The learning rate scheduler to use for training. Defaults to None.
         """
         self.model = model
         self.model.to(self.DEVICE)
         self.optimizer = optimizer
         self.loss_function = loss_function
         self.metrics = self.__preprocess_metrics(metrics)
+        self.scheduler = scheduler
         self.metrics_evaluated = {}
         self.train_loss = 0
         self.test_loss = 0
@@ -384,6 +387,10 @@ class TorchTrain:
             The number of epochs to train for. Defaults to 1.
         verbose : bool, optional
             Whether to print the training progress during training. Defaults to True.
+        train_steps_per_epoch : int, optional
+            The number of batches to train on per epoch. Defaults to None.
+        validation_steps_per_epoch : int, optional
+            The number of batches to test on per epoch. Defaults to None.
 
         Returns
         -------
@@ -394,9 +401,10 @@ class TorchTrain:
         >>> model = MyModel()
         >>> optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
         >>> loss_function = nn.CrossEntropyLoss()
+        >>> scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.9)
         >>> train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=32, shuffle=True)
         >>> validation_data_loader = torch.utils.data.DataLoader(test_dataset, batch_size=32, shuffle=False)
-        >>> trainer = TorchTrain(model, optimizer, loss_function)
+        >>> trainer = TorchTrain(model, optimizer, loss_function, scheduler=scheduler)
         >>> trainer.fit(train_loader, validation_data_loader=validation_data_loader, epochs=10, verbose=True)
         """
         self.epochs = epochs
@@ -449,6 +457,10 @@ class TorchTrain:
                 )
                 print(test_progress)
             self.__reset_counters()
+            if self.scheduler is not None:
+                self.scheduler.step()
+            if verbose and self.scheduler is not None:
+                print(f"New Learning rate: {self.scheduler.get_last_lr()[0]:.6f}")
 
         return self.__create_history()
 
