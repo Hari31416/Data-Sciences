@@ -1,7 +1,7 @@
 name: data-science
 
 dependencies:
-  - python=3.9
+  - python=3.10
   - pip
   - numpy
   - scipy
@@ -17,12 +17,31 @@ dependencies:
       - beautifulsoup4
       - lxml
       - selenium
-      - tensorflow-cpu
+      - tensorflow
       - keras
       - scikit-learn
+      - xgboost
+      - lightgbm
+      - catboost
+      - opencv-python
       - tqdm
-      - twilio
       - nbformat
       - nbconvert
       - pyperclip
       - send2trash
+      # Pytorch
+      - torch
+      - torchvision
+      - torchaudio
+      - lightning
+      # Huggingface
+      - transformers[sentencepiece]
+      - datasets
+      - tokenizers
+      - wandb
+      - accelerate
+      - evaluate
+      # Spark
+      - pyspark
+      - findspark
+      - pyarrow
